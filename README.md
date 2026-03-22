@@ -202,4 +202,4 @@ Author
 Alexander Narváez
 Independent Researcher / Universidad EAFIT
 Colombia
-Email: anarvaez1@eafit.edu.co
+Email: anarvae1@eafit.edu.co
