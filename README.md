@@ -40,7 +40,7 @@ emit k exactly H[k] times, for k = 0 to U-1
 ```
 ┌────────────────────┐
 │     Input Lanes    │
-│   k1  k2  k3  k4  │
+│   k1  k2  k3  k4   │
 └─────────┬──────────┘
           │
           ▼
