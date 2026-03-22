@@ -1,4 +1,4 @@
-# DialSort: Non-Comparative Integer Sorting via the Self-Indexing Principle
+# DialSort: Non-Comparative Integer Sorting via the Self-Indexing Principle [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.19169171.svg)](https://doi.org/10.5281/zenodo.19169171)
 
 ## Overview
 
@@ -195,7 +195,7 @@ This repository accompanies the paper:
 
 DialSort: Non-Comparative Integer Sorting via the Self-Indexing Principle
 
-(Submission: arXiv)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.19169171.svg)](https://doi.org/10.5281/zenodo.19169171)
 
 Author
 
