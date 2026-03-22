@@ -190,6 +190,7 @@ In all cases:
 The system reveals state. It does not compute order.
 
 Paper
+## Paper
 
 This repository accompanies the paper:
 
