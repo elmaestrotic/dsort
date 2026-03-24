@@ -51,7 +51,7 @@ build cmake_object_order_depends_target_dsortcpp: phony || CMakeFiles/dsortcpp.d
 
 build CMakeFiles/dsortcpp.dir/dialsort_benchmark_v2.cpp.obj: CXX_COMPILER__dsortcpp_unscanned_Debug C$:/EAFIT$ 2026/DIALSORT/dsortcpp/dialsort_benchmark_v2.cpp || cmake_object_order_depends_target_dsortcpp
   DEP_FILE = CMakeFiles\dsortcpp.dir\dialsort_benchmark_v2.cpp.obj.d
-  FLAGS = -g -std=gnu++14 -fdiagnostics-color=always
+  FLAGS = -g -fdiagnostics-color=always
   OBJECT_DIR = CMakeFiles\dsortcpp.dir
   OBJECT_FILE_DIR = CMakeFiles\dsortcpp.dir
 
@@ -72,6 +72,39 @@ build dsortcpp.exe: CXX_EXECUTABLE_LINKER__dsortcpp_Debug CMakeFiles/dsortcpp.di
   TARGET_FILE = dsortcpp.exe
   TARGET_IMPLIB = libdsortcpp.dll.a
   TARGET_PDB = dsortcpp.exe.dbg
+
+# =============================================================================
+# Object build statements for EXECUTABLE target bench_vs
+
+
+#############################################
+# Order-only phony target for bench_vs
+
+build cmake_object_order_depends_target_bench_vs: phony || CMakeFiles/bench_vs.dir
+
+build CMakeFiles/bench_vs.dir/bench_vs_dialsort_vs_counting_bench.cpp.obj: CXX_COMPILER__bench_vs_unscanned_Debug C$:/EAFIT$ 2026/DIALSORT/dsortcpp/bench_vs$ dialsort_vs_counting_bench.cpp || cmake_object_order_depends_target_bench_vs
+  DEP_FILE = CMakeFiles\bench_vs.dir\bench_vs_dialsort_vs_counting_bench.cpp.obj.d
+  FLAGS = -g -fdiagnostics-color=always
+  OBJECT_DIR = CMakeFiles\bench_vs.dir
+  OBJECT_FILE_DIR = CMakeFiles\bench_vs.dir
+
+
+# =============================================================================
+# Link build statements for EXECUTABLE target bench_vs
+
+
+#############################################
+# Link the executable bench_vs.exe
+
+build bench_vs.exe: CXX_EXECUTABLE_LINKER__bench_vs_Debug CMakeFiles/bench_vs.dir/bench_vs_dialsort_vs_counting_bench.cpp.obj
+  FLAGS = -g
+  LINK_LIBRARIES = -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
+  OBJECT_DIR = CMakeFiles\bench_vs.dir
+  POST_BUILD = cd .
+  PRE_LINK = cd .
+  TARGET_FILE = bench_vs.exe
+  TARGET_IMPLIB = libbench_vs.dll.a
+  TARGET_PDB = bench_vs.exe.dbg
 
 
 #############################################
@@ -99,6 +132,8 @@ build rebuild_cache: phony CMakeFiles/rebuild_cache.util
 # =============================================================================
 # Target aliases.
 
+build bench_vs: phony bench_vs.exe
+
 build dsortcpp: phony dsortcpp.exe
 
 # =============================================================================
@@ -109,7 +144,7 @@ build dsortcpp: phony dsortcpp.exe
 #############################################
 # Folder: C:/EAFIT 2026/DIALSORT/dsortcpp/cmake-build-debug
 
-build all: phony dsortcpp.exe
+build all: phony dsortcpp.exe bench_vs.exe
 
 # =============================================================================
 # Built-in targets
