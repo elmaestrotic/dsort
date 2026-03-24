@@ -1,7 +1,7 @@
 
 # DialSort: Non-Comparative Integer Sorting via the Self-Indexing Principle
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.19169171.svg)](https://doi.org/10.5281/zenodo.19169171)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.19169171.svg)](https://doi.org/10.5281/zenodo.19198092)
 
 ---
 
@@ -232,7 +232,7 @@ This repository accompanies the paper:
 **DialSort: Non-Comparative Integer Sorting via the Self-Indexing Principle**  
 Alexander Narváez — Independent Researcher / Universidad EAFIT, Colombia
 
-📄 [DOI: 10.5281/zenodo.19169171](https://doi.org/10.5281/zenodo.19169171)
+📄 [DOI: 10.5281/zenodo.19169171](https://doi.org/10.5281/zenodo.19198092)
 
 ---
 
