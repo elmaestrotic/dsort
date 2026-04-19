@@ -132,7 +132,55 @@ Avoid when:
 - Paper (PDF)
 
 ---
+## 🎮 Interactive Simulators
 
+DialSort can be explored through multiple complementary visual models.  
+Each simulator highlights a different layer of the execution model:
+
+---
+
+### 🔷 Sovereign Dial Model — Geometric Ordering
+Visualizes the core principle of DialSort:  
+each value *is its own position* in the ordered space.
+
+👉 https://elmaestrotic.github.io/dsort/simulators/sovereign-dial/
+
+---
+
+### ✨ Luminico Model — Frequency as Illumination
+Represents frequency accumulation as light intensity along value rails.  
+Higher repetition → stronger illumination.
+
+👉 https://elmaestrotic.github.io/dsort/simulators/luminico/
+
+---
+
+### 🧠 Spatial / Cerebras Model — Parallel Execution
+Simulates a many-core architecture where each key is routed to its owning tile.  
+Demonstrates how DialSort maps naturally to massively parallel hardware.
+
+👉 https://elmaestrotic.github.io/dsort/simulators/cerebras/
+
+---
+
+### 🔥 CRN Simulator — Conflict Resolution Network
+Shows how concurrent writes are resolved without collisions.  
+Equal keys are merged through a reduction tree before reaching memory.
+
+👉 https://elmaestrotic.github.io/dsort/simulators/crn/
+
+---
+
+## 🧩 Conceptual Layers
+
+DialSort can be understood through multiple equivalent lenses:
+
+- **Geometric** → Sovereign Dial  
+- **Energetic** → Luminico  
+- **Architectural** → Spatial (Cerebras-style)  
+- **Algorithmic** → CRN  
+
+> These perspectives are not separate implementations, but different views of the same underlying execution principle.
 ## 🧪 Reproducibility
 
 - Seed: `20260321`
