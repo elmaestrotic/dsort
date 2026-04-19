@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DialSort · Conflict Resolution Network (CRN)</title>
+  <style>
+    :root{
+      --bg:#050a13;
+      --surface:#0b1221;
+      --surface2:#101a2d;
+      --surface3:#16243e;
+      --border:#1a3153;
+      --border2:#294b78;
+      --text:#e9f3ff;
+      --muted:#8ea9ce;
+      --blue:#59a9ff;
+      --gold:#ffc857;
+      --green:#6bf5b0;
+      --red:#ff8c8c;
+      --purple:#b597ff;
+      --cyan:#6de1ff;
+      --shadow:0 24px 80px rgba(0,0,0,.45);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(circle at 20% 0%, #122446 0%, transparent 34%),
+        radial-gradient(circle at 100% 20%, #0a1731 0%, transparent 30%),
+        linear-gradient(180deg,#030711 0%, var(--bg) 100%);
+      padding:16px;
+    }
+    .wrap{
+      max-width:1540px;
+      margin:0 auto;
+      border:1px solid #10213d;
+      border-radius:28px;
+      background:linear-gradient(180deg, rgba(11,20,38,.97), rgba(4,9,20,.985));
+      box-shadow:var(--shadow);
+      padding:16px;
+    }
+    .topbar,.panel{
+      background:rgba(6,10,20,.76);
+      border:1px solid #122543;
+      border-radius:22px;
+    }
+    .topbar{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      align-items:center;
+      padding:12px;
+      margin-bottom:14px;
+    }
+    button,input,textarea,select{
+      border-radius:16px;
+      border:1px solid #254267;
+      background:#12203a;
+      color:var(--text);
+      padding:10px 14px;
+      font-size:14px;
+    }
+    button{cursor:pointer;transition:.18s ease}
+    button:hover{transform:translateY(-1px);background:#183158}
+    button:disabled{opacity:.45;cursor:not-allowed;transform:none}
+    input[type="number"]{width:92px}
+    textarea{
+      min-height:76px;
+      width:100%;
+      resize:vertical;
+      font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    }
+    .pill{
+      padding:8px 12px;
+      border-radius:999px;
+      background:#10203b;
+      border:1px solid #214167;
+      color:var(--muted);
+      font-size:13px;
+    }
+    .grid{
+      display:grid;
+      grid-template-columns:1.45fr .9fr;
+      gap:14px;
+    }
+    @media (max-width:1160px){ .grid{grid-template-columns:1fr;} }
+    .panel{padding:14px}
+    .stack{display:grid;gap:14px}
+    .label{
+      font-size:12px;
+      text-transform:uppercase;
+      letter-spacing:.08em;
+      color:#9db8de;
+      margin-bottom:8px;
+    }
+    .small{
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.5;
+    }
+    .status{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:8px;
+    }
+    .badge{
+      padding:7px 10px;
+      border-radius:999px;
+      font-size:12px;
+      border:1px solid #2b4a74;
+      background:#112240;
+      color:#d3e2ff;
+    }
+    .kv{
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0,1fr));
+      gap:10px;
+    }
+    .card{
+      background:linear-gradient(180deg,#0b1528,#08111f);
+      border:1px solid #172d4f;
+      border-radius:18px;
+      padding:12px;
+    }
+    .mono{
+      font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+      color:#d9e8ff;
+      word-break:break-word;
+    }
+    .outbox{
+      font-size:15px;
+      color:#fff3ca;
+      font-weight:700;
+    }
+    svg{
+      width:100%;
+      height:auto;
+      display:block;
+      border-radius:22px;
+      background:linear-gradient(180deg,#06101d 0%,#030812 100%);
+      border:1px solid #1b3557;
+    }
+    .slider{
+      width:100%;
+      accent-color:var(--blue);
+    }
+    .legend{
+      display:flex;
+      flex-wrap:wrap;
+      gap:12px;
+      margin-top:10px;
+      color:var(--muted);
+      font-size:12px;
+    }
+    .legend .item{display:flex;gap:6px;align-items:center}
+    .dot{width:11px;height:11px;border-radius:50%}
+    .signature{
+      text-align:center;
+      margin-top:10px;
+      font-size:13px;
+      color:#8ca7cf;
+    }
+    .mini{
+      margin-top:8px;
+      display:grid;
+      gap:8px;
+    }
+    .step{
+      padding:9px 10px;
+      border-radius:12px;
+      border:1px solid #183357;
+      background:#0c1628;
+      color:#bcd2ef;
+      font-size:12px;
+    }
+    .step.active{
+      border-color:#4f95e8;
+      background:#102344;
+      color:#e8f3ff;
+    }
+    .step strong{color:#ffd995}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <input id="laneCount" type="number" min="2" max="16" value="8" title="lanes" />
+      <input id="maxVal" type="number" min="3" max="31" value="9" title="maximum key" />
+      <button id="btnApplyInput">Apply vector</button>
+      <button id="btnRandom">Random vector</button>
+      <button id="btnSkew">Hotspot example</button>
+      <button id="btnStage">Step</button>
+      <button id="btnAuto">▶ Auto</button>
+      <button id="btnReset">Reset</button>
+      <div class="pill">CRN mode: concurrent lanes → equality-only merge → single conflict-free histogram write</div>
+    </div>
+
+    <div class="panel" style="margin-bottom:14px;">
+      <div class="label">Input lanes (one cycle snapshot)</div>
+      <textarea id="vectorInput">3,1,3,3,5,1,5,3</textarea>
+      <div class="small" style="margin-top:8px;">
+        This simulator isolates the <b>Conflict Resolution Network (CRN)</b> itself. Multiple lanes arrive in the same cycle. Equal keys are <b>merged additively</b>; different keys are <b>forwarded unchanged</b>. The goal is not to sort here, but to show how DialSort removes write collisions before they reach histogram memory.
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="stack">
+        <div class="panel">
+          <div class="label">CRN reduction view</div>
+          <svg id="viz" viewBox="0 0 1500 900" preserveAspectRatio="xMidYMid meet"></svg>
+          <div class="legend">
+            <div class="item"><span class="dot" style="background:#59a9ff"></span> input lane packet</div>
+            <div class="item"><span class="dot" style="background:#6bf5b0"></span> merged (equal keys)</div>
+            <div class="item"><span class="dot" style="background:#ff8c8c"></span> forwarded pair (different keys)</div>
+            <div class="item"><span class="dot" style="background:#ffc857"></span> histogram write</div>
+            <div class="item"><span class="dot" style="background:#b597ff"></span> active CRN level</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="stack">
+        <div class="panel">
+          <div class="label">Execution controls</div>
+          <input id="levelSlider" class="slider" type="range" min="0" max="4" step="1" value="0" />
+          <div class="status">
+            <div class="badge">phase: <span id="phaseTxt">idle</span></div>
+            <div class="badge">level: <span id="levelTxt">0</span></div>
+            <div class="badge">lanes: <span id="lanesTxt">0</span></div>
+            <div class="badge">max depth: <span id="depthTxt">0</span></div>
+            <div class="badge">writes saved: <span id="savedTxt">0</span></div>
+          </div>
+          <div class="mini" id="stepsBox"></div>
+        </div>
+
+        <div class="panel">
+          <div class="label">Signals and invariants</div>
+          <div class="kv">
+            <div class="card">
+              <div class="small">Lane packets</div>
+              <div id="laneText" class="mono"></div>
+            </div>
+            <div class="card">
+              <div class="small">Current level state</div>
+              <div id="levelStateText" class="mono"></div>
+            </div>
+            <div class="card">
+              <div class="small">Final CRN outputs</div>
+              <div id="finalText" class="mono"></div>
+            </div>
+            <div class="card">
+              <div class="small">Histogram updates</div>
+              <div id="histText" class="outbox mono"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="label">Technical reading</div>
+          <div class="small" id="explainText">
+            Waiting. The CRN takes all same-cycle arrivals and compresses equal-key updates through a logarithmic reduction tree.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="signature">DialSort Conflict Resolution Network (CRN) Simulator — by Alexander Narváez - anarvae1@eafit.edu.co</div>
+
+<script>
+(() => {
+  const state = {
+    maxVal: 9,
+    values: [3,1,3,3,5,1,5,3],
+    phase: 'idle',
+    stage: 0,
+    autoTimer: null,
+    levels: [],
+    histogram: [],
+    finalNodes: [],
+    writesSaved: 0
+  };
+
+  const $ = id => document.getElementById(id);
+  const svg = $('viz');
+
+  function clamp(n,a,b){ return Math.max(a, Math.min(b, n)); }
+
+  function parseInput(text){
+    return text.split(/[\,\s]+/)
+      .map(s => s.trim())
+      .filter(Boolean)
+      .map(Number)
+      .filter(n => Number.isFinite(n))
+      .map(n => clamp(Math.floor(n), 0, state.maxVal));
+  }
+
+  function randomVector(n){
+    return Array.from({length:n}, () => Math.floor(Math.random() * (state.maxVal + 1)));
+  }
+
+  function hotspotVector(n){
+    const hot = Math.floor(Math.random() * (state.maxVal + 1));
+    const arr = [];
+    for(let i=0;i<n;i++){
+      arr.push(Math.random() < 0.65 ? hot : Math.floor(Math.random() * (state.maxVal + 1)));
+    }
+    return arr;
+  }
+
+  function stopAuto(){
+    if(state.autoTimer) clearInterval(state.autoTimer);
+    state.autoTimer = null;
+  }
+
+  function labelNode(node){
+    return `${node.key}:${node.count}`;
+  }
+
+  function computeCRN(values){
+    const levels = [];
+    let current = values.map((v, idx) => ({
+      key: v, count: 1,
+      ids: [idx],
+      type: 'input'
+    }));
+    levels.push(current);
+
+    while(current.length > 1){
+      const next = [];
+      for(let i=0;i<current.length;i+=2){
+        const a = current[i];
+        const b = current[i+1];
+        if(!b){
+          next.push({
+            key: a.key, count: a.count, ids: a.ids.slice(),
+            type: 'carry', from: [i]
+          });
+          continue;
+        }
+        if(a.key === b.key){
+          next.push({
+            key: a.key,
+            count: a.count + b.count,
+            ids: a.ids.concat(b.ids),
+            type: 'merge',
+            from: [i, i+1]
+          });
+        } else {
+          next.push({
+            key: a.key, count: a.count, ids: a.ids.slice(),
+            type: 'forwardA',
+            from: [i]
+          });
+          next.push({
+            key: b.key, count: b.count, ids: b.ids.slice(),
+            type: 'forwardB',
+            from: [i+1]
+          });
+        }
+      }
+      levels.push(next);
+      current = next;
+      if(levels.length > 8) break;
+    }
+
+    const hist = Array(state.maxVal + 1).fill(0);
+    current.forEach(n => hist[n.key] += n.count);
+
+    const uniqueWrites = current.length;
+    const naiveWrites = values.length;
+    return {
+      levels,
+      finalNodes: current,
+      histogram: hist,
+      writesSaved: naiveWrites - uniqueWrites
+    };
+  }
+
+  function maxDepth(){
+    return Math.max(0, state.levels.length - 1);
+  }
+
+  function currentLevelNodes(){
+    return state.levels[state.stage] || [];
+  }
+
+  function refreshState(){
+    const result = computeCRN(state.values);
+    state.levels = result.levels;
+    state.finalNodes = result.finalNodes;
+    state.histogram = result.histogram;
+    state.writesSaved = result.writesSaved;
+    state.stage = clamp(state.stage, 0, maxDepth() + 1);
+  }
+
+  function buildSteps(){
+    const box = $('stepsBox');
+    const depth = maxDepth();
+    const items = [];
+
+    items.push(`<div class="step ${state.stage===0 ? 'active':''}"><strong>Level 0</strong> · raw arrivals from lanes</div>`);
+    for(let i=1;i<=depth;i++){
+      items.push(`<div class="step ${state.stage===i ? 'active':''}"><strong>Level ${i}</strong> · equality checks + additive forwarding</div>`);
+    }
+    items.push(`<div class="step ${state.stage===depth+1 ? 'active':''}"><strong>Final write</strong> · conflict-free histogram updates</div>`);
+    box.innerHTML = items.join('');
+  }
+
+  function explainText(){
+    if(state.stage === 0){
+      return 'Level 0. Each lane contributes one packet (k,1). At this point, simultaneous identical keys would collide if written directly to the histogram.';
+    }
+    if(state.stage <= maxDepth()){
+      return `Level ${state.stage}. The CRN compares only equality inside adjacent pairs. Equal keys are merged additively; unequal keys are forwarded unchanged. This is where collisions are eliminated structurally.`;
+    }
+    return 'Final write stage. Each surviving CRN packet performs one conflict-free histogram update. Same-key arrivals from multiple lanes have already been compressed upstream.';
+  }
+
+  function updatePanels(){
+    const depth = maxDepth();
+    $('phaseTxt').textContent = state.phase;
+    $('levelTxt').textContent = state.stage;
+    $('lanesTxt').textContent = state.values.length;
+    $('depthTxt').textContent = depth;
+    $('savedTxt').textContent = state.writesSaved;
+    $('levelSlider').max = String(depth + 1);
+    $('levelSlider').value = String(state.stage);
+
+    $('laneText').textContent = state.values.map((v, i) => `d${i+1}=(${v},1)`).join('  ');
+
+    const curNodes = state.stage === depth + 1 ? state.finalNodes : currentLevelNodes();
+    $('levelStateText').textContent = curNodes.length
+      ? curNodes.map(labelNode).join('  |  ')
+      : '—';
+
+    $('finalText').textContent = state.finalNodes.length
+      ? state.finalNodes.map(labelNode).join('  |  ')
+      : '—';
+
+    $('histText').textContent = state.histogram
+      .map((c, k) => c ? `H[${k}]+=${c}` : null)
+      .filter(Boolean)
+      .join('  ') || 'no writes';
+
+    $('explainText').textContent = explainText();
+    buildSteps();
+  }
+
+  function rect(x,y,w,h,fill,stroke='none',rx=10,sw=1,extra=''){
+    return `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${rx}" fill="${fill}" stroke="${stroke}" stroke-width="${sw}" ${extra}/>`;
+  }
+  function text(x,y,str,size=14,fill='#e6f0ff',weight=600,anchor='middle'){
+    return `<text x="${x}" y="${y}" fill="${fill}" font-size="${size}" font-weight="${weight}" text-anchor="${anchor}" font-family="Inter, sans-serif">${str}</text>`;
+  }
+  function line(x1,y1,x2,y2,stroke='#28476f',width=2,dash=''){
+    return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${stroke}" stroke-width="${width}" ${dash ? `stroke-dasharray="${dash}"` : ''} stroke-linecap="round" />`;
+  }
+  function circle(x,y,r,fill,stroke='none',sw=1){
+    return `<circle cx="${x}" cy="${y}" r="${r}" fill="${fill}" stroke="${stroke}" stroke-width="${sw}" />`;
+  }
+
+  function nodeColor(node){
+    if(node.type === 'merge') return '#6bf5b0';
+    if(node.type && node.type.startsWith('forward')) return '#ff8c8c';
+    if(node.type === 'carry') return '#6de1ff';
+    return '#59a9ff';
+  }
+
+  function render(){
+    const W = 1500, H = 900;
+    const parts = [];
+    parts.push(`
+      <defs>
+        <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#06101d" />
+          <stop offset="100%" stop-color="#030812" />
+        </linearGradient>
+        <linearGradient id="chipGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#0a1325" />
+          <stop offset="100%" stop-color="#07101f" />
+        </linearGradient>
+      </defs>
+    `);
+    parts.push(rect(0,0,W,H,'url(#bg)'));
+    parts.push(rect(16,16,W-32,H-32,'url(#chipGrad)','#173257',28,2));
+    parts.push(text(48,44,'DIALSORT · CONFLICT RESOLUTION NETWORK (CRN)',18,'#dceaff',800,'start'));
+
+    const laneArea = {x:58,y:86,w:1384,h:88};
+    const networkArea = {x:58,y:206,w:1020,h:636};
+    const writeArea = {x:1112,y:206,w:320,h:636};
+
+    parts.push(text(laneArea.x,110,'INPUT LANES (same cycle)',14,'#9cb6dc',700,'start'));
+    parts.push(text(networkArea.x,190,'LOGARITHMIC REDUCTION TREE',14,'#9cb6dc',700,'start'));
+    parts.push(text(writeArea.x,190,'CONFLICT-FREE HISTOGRAM WRITES',14,'#9cb6dc',700,'start'));
+
+    parts.push(rect(laneArea.x,laneArea.y,laneArea.w,laneArea.h,'#091221','#1d395e',18,1.5));
+    parts.push(rect(networkArea.x,networkArea.y,networkArea.w,networkArea.h,'#091221','#1d395e',18,1.5));
+    parts.push(rect(writeArea.x,writeArea.y,writeArea.w,writeArea.h,'#091221','#1d395e',18,1.5));
+
+    const n = Math.max(1, state.values.length);
+    const laneGap = 10;
+    const laneW = Math.min(92, (laneArea.w - laneGap * (n - 1)) / n);
+    const laneTotal = laneW * n + laneGap * (n - 1);
+    const laneStart = laneArea.x + (laneArea.w - laneTotal) / 2;
+    state.values.forEach((v, i) => {
+      const x = laneStart + i * (laneW + laneGap);
+      const y = laneArea.y + 18;
+      const active = state.stage === 0 || state.phase === 'auto';
+      parts.push(rect(x,y,laneW,44,'#10203b', active ? '#4a84c8' : '#294972',12,1.5));
+      parts.push(text(x+laneW/2,y+17,`d${i+1}`,11,'#8ca7cf',700));
+      parts.push(text(x+laneW/2,y+35,`(${v},1)`,14,'#eaf4ff',800));
+    });
+
+    const levelCount = state.levels.length;
+    const stageForHighlight = state.stage <= maxDepth() ? state.stage : maxDepth();
+    const levelXs = [];
+    for(let l=0; l<levelCount; l++){
+      const x = networkArea.x + 82 + l * ((networkArea.w - 164) / Math.max(1, levelCount - 1));
+      levelXs.push(x);
+    }
+
+    const levelLayouts = [];
+    for(let l=0; l<levelCount; l++){
+      const nodes = state.levels[l];
+      const top = networkArea.y + 46;
+      const bottom = networkArea.y + networkArea.h - 50;
+      const space = nodes.length > 1 ? (bottom - top) / (nodes.length - 1) : 0;
+      const pos = nodes.map((node, idx) => ({
+        x: levelXs[l],
+        y: nodes.length === 1 ? (top + bottom)/2 : top + idx * space,
+        node
+      }));
+      levelLayouts.push(pos);
+
+      const highlight = l === stageForHighlight && state.stage <= maxDepth();
+      parts.push(rect(levelXs[l]-44, networkArea.y+12, 88, 22, highlight ? 'rgba(181,151,255,.22)' : 'rgba(181,151,255,.08)', highlight ? '#8e72e8' : '#4d4f82', 10, 1));
+      parts.push(text(levelXs[l], networkArea.y+27, `L${l}`, 12, '#dfe7ff', 800));
+    }
+
+    for(let l=0; l<levelLayouts.length - 1; l++){
+      const cur = levelLayouts[l];
+      const nxt = levelLayouts[l+1];
+      let nextIdx = 0;
+      for(let i=0; i<cur.length; i+=2){
+        const a = cur[i];
+        const b = cur[i+1];
+        if(!b){
+          const target = nxt[nextIdx++];
+          parts.push(line(a.x+18, a.y, target.x-18, target.y, '#4c79aa', 2, '5 5'));
+          continue;
+        }
+        const leftTarget = nxt[nextIdx];
+        if(a.node.key === b.node.key){
+          parts.push(line(a.x+18, a.y, leftTarget.x-18, leftTarget.y, '#51c48c', 3));
+          parts.push(line(b.x+18, b.y, leftTarget.x-18, leftTarget.y, '#51c48c', 3));
+          nextIdx += 1;
+        } else {
+          const t1 = nxt[nextIdx++];
+          const t2 = nxt[nextIdx++];
+          parts.push(line(a.x+18, a.y, t1.x-18, t1.y, '#d37676', 2, '4 4'));
+          parts.push(line(b.x+18, b.y, t2.x-18, t2.y, '#d37676', 2, '4 4'));
+        }
+      }
+    }
+
+    levelLayouts.forEach((nodes, l) => {
+      nodes.forEach(({x,y,node}) => {
+        const active = state.stage === l && state.stage <= maxDepth();
+        const c = nodeColor(node);
+        parts.push(circle(x, y, active ? 24 : 20, c, active ? '#f0fbff' : '#173257', active ? 2.2 : 1.5));
+        parts.push(text(x, y+4, `${node.key}:${node.count}`, 12, '#06101d', 800));
+      });
+    });
+
+    const depth = maxDepth();
+    const writeX = writeArea.x + 96;
+    const writeTop = writeArea.y + 54;
+    const writeBottom = writeArea.y + writeArea.h - 54;
+    const final = state.finalNodes;
+    const wSpace = final.length > 1 ? (writeBottom - writeTop) / (final.length - 1) : 0;
+    const writePos = final.map((node, idx) => ({
+      x: writeX, y: final.length === 1 ? (writeTop + writeBottom)/2 : writeTop + idx * wSpace, node
+    }));
+
+    if(levelLayouts.length){
+      const last = levelLayouts[levelLayouts.length - 1];
+      last.forEach((p, idx) => {
+        const target = writePos[idx];
+        if(target){
+          parts.push(line(p.x+22, p.y, target.x-26, target.y, '#ffcb61', 3));
+        }
+      });
+    }
+
+    parts.push(rect(writeArea.x + 164, writeArea.y + 26, 122, 28, 'rgba(255,200,87,.12)', '#8d6d18', 10, 1));
+    parts.push(text(writeArea.x + 225, writeArea.y + 45, 'histogram bank', 12, '#fff1c0', 800));
+
+    writePos.forEach(({x,y,node}) => {
+      const active = state.stage === depth + 1;
+      parts.push(circle(x, y, active ? 24 : 20, '#ffc857', active ? '#fff4d8' : '#8b6a19', active ? 2.2 : 1.5));
+      parts.push(text(x, y+4, `${node.key}:${node.count}`, 12, '#06101d', 800));
+      parts.push(rect(x + 58, y - 18, 124, 36, '#2a220a', '#8f6b12', 10, 1.2));
+      parts.push(text(x + 120, y + 5, `H[${node.key}] += ${node.count}`, 12, '#fff1c0', 800));
+    });
+
+    parts.push(rect(writeArea.x + 18, writeArea.y + writeArea.h - 122, writeArea.w - 36, 96, '#0b1426', '#173257', 14, 1));
+    parts.push(text(writeArea.x + 34, writeArea.y + writeArea.h - 96, 'Naive writes', 12, '#9cb6dc', 700, 'start'));
+    parts.push(text(writeArea.x + writeArea.w - 34, writeArea.y + writeArea.h - 96, String(state.values.length), 16, '#59a9ff', 800, 'end'));
+    parts.push(text(writeArea.x + 34, writeArea.y + writeArea.h - 66, 'CRN writes', 12, '#9cb6dc', 700, 'start'));
+    parts.push(text(writeArea.x + writeArea.w - 34, writeArea.y + writeArea.h - 66, String(state.finalNodes.length), 16, '#ffc857', 800, 'end'));
+    parts.push(text(writeArea.x + 34, writeArea.y + writeArea.h - 36, 'Collisions removed', 12, '#9cb6dc', 700, 'start'));
+    parts.push(text(writeArea.x + writeArea.w - 34, writeArea.y + writeArea.h - 36, String(state.writesSaved), 16, '#6bf5b0', 800, 'end'));
+
+    svg.innerHTML = parts.join('');
+  }
+
+  function sync(){
+    refreshState();
+    updatePanels();
+    render();
+  }
+
+  function setPhase(phase){
+    state.phase = phase;
+    updatePanels();
+    render();
+  }
+
+  function stepOnce(){
+    stopAuto();
+    const end = maxDepth() + 1;
+    if(state.stage < end){
+      state.stage += 1;
+      setPhase(state.stage === end ? 'write' : 'reduce');
+    } else {
+      state.stage = 0;
+      setPhase('idle');
+    }
+  }
+
+  function runAuto(){
+    stopAuto();
+    state.stage = 0;
+    setPhase('auto');
+    const end = maxDepth() + 1;
+    state.autoTimer = setInterval(() => {
+      if(state.stage < end){
+        state.stage += 1;
+        updatePanels();
+        render();
+      } else {
+        stopAuto();
+        state.phase = 'write';
+        updatePanels();
+        render();
+      }
+    }, 900);
+  }
+
+  $('btnApplyInput').addEventListener('click', () => {
+    stopAuto();
+    state.maxVal = clamp(Number($('maxVal').value) || 9, 3, 31);
+    let vals = parseInput($('vectorInput').value);
+    const lanes = clamp(Number($('laneCount').value) || 8, 2, 16);
+    if(!vals.length) vals = [0];
+    vals = vals.slice(0, lanes);
+    while(vals.length < lanes) vals.push(Math.floor(Math.random() * (state.maxVal + 1)));
+    state.values = vals;
+    $('vectorInput').value = state.values.join(',');
+    state.stage = 0;
+    setPhase('idle');
+    sync();
+  });
+
+  $('btnRandom').addEventListener('click', () => {
+    stopAuto();
+    state.maxVal = clamp(Number($('maxVal').value) || 9, 3, 31);
+    const lanes = clamp(Number($('laneCount').value) || 8, 2, 16);
+    state.values = randomVector(lanes);
+    $('vectorInput').value = state.values.join(',');
+    state.stage = 0;
+    setPhase('idle');
+    sync();
+  });
+
+  $('btnSkew').addEventListener('click', () => {
+    stopAuto();
+    state.maxVal = clamp(Number($('maxVal').value) || 9, 3, 31);
+    const lanes = clamp(Number($('laneCount').value) || 8, 2, 16);
+    state.values = hotspotVector(lanes);
+    $('vectorInput').value = state.values.join(',');
+    state.stage = 0;
+    setPhase('idle');
+    sync();
+  });
+
+  $('btnStage').addEventListener('click', stepOnce);
+  $('btnAuto').addEventListener('click', runAuto);
+
+  $('btnReset').addEventListener('click', () => {
+    stopAuto();
+    state.stage = 0;
+    setPhase('idle');
+    sync();
+  });
+
+  $('levelSlider').addEventListener('input', (e) => {
+    stopAuto();
+    state.stage = clamp(Number(e.target.value), 0, maxDepth() + 1);
+    setPhase(state.stage === 0 ? 'idle' : (state.stage === maxDepth() + 1 ? 'write' : 'reduce'));
+  });
+
+  ['laneCount','maxVal'].forEach(id => {
+    $(id).addEventListener('change', () => {
+      stopAuto();
+      state.maxVal = clamp(Number($('maxVal').value) || 9, 3, 31);
+      const lanes = clamp(Number($('laneCount').value) || 8, 2, 16);
+      state.values = state.values.slice(0, lanes).map(v => clamp(v, 0, state.maxVal));
+      while(state.values.length < lanes) state.values.push(Math.floor(Math.random() * (state.maxVal + 1)));
+      $('vectorInput').value = state.values.join(',');
+      state.stage = 0;
+      setPhase('idle');
+      sync();
+    });
+  });
+
+  sync();
+})();
+</script>
+</body>
+</html>
