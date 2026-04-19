@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DialSort Sovereign × Cerebras-Style Spatial Simulator</title>
+  <style>
+    :root {
+      --bg: #040914;
+      --panel: #0b1426;
+      --panel2: #101d35;
+      --line: #1e365b;
+      --line2: #284a79;
+      --text: #eaf3ff;
+      --muted: #89a6cf;
+      --blue: #66b2ff;
+      --gold: #ffc857;
+      --green: #6bf5b0;
+      --red: #ff8b8b;
+      --purple: #b597ff;
+      --cyan: #6de1ff;
+      --chip: #08101f;
+      --tile: #0d1830;
+      --tileActive: #17325d;
+      --tileOwner: #133f33;
+      --scan: #88f0b2;
+      --inject: #57a8ff;
+      --shadow: 0 24px 80px rgba(0,0,0,.45);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 20% 0%, #102042 0%, transparent 36%),
+        radial-gradient(circle at 100% 20%, #0b1732 0%, transparent 30%),
+        linear-gradient(180deg, #030711 0%, var(--bg) 100%);
+      padding: 16px;
+    }
+    .wrap {
+      max-width: 1560px;
+      margin: 0 auto;
+      border: 1px solid #10203a;
+      border-radius: 28px;
+      background: linear-gradient(180deg, rgba(11,20,38,.96), rgba(4,9,20,.98));
+      box-shadow: var(--shadow);
+      padding: 16px;
+    }
+    .topbar, .panel {
+      background: rgba(6,10,20,.76);
+      border: 1px solid #122543;
+      border-radius: 22px;
+    }
+    .topbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      padding: 12px;
+      margin-bottom: 14px;
+    }
+    button, input, textarea, select {
+      border-radius: 16px;
+      border: 1px solid #254267;
+      background: #12203a;
+      color: var(--text);
+      padding: 10px 14px;
+      font-size: 14px;
+    }
+    button { cursor: pointer; transition: .18s ease; }
+    button:hover { transform: translateY(-1px); background: #183158; }
+    button:disabled { opacity: .45; cursor: not-allowed; transform: none; }
+    input[type="number"] { width: 92px; }
+    textarea {
+      min-height: 80px;
+      width: 100%;
+      resize: vertical;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    }
+    .pill {
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: #10203b;
+      border: 1px solid #214167;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: 1.45fr .9fr;
+      gap: 14px;
+    }
+    @media (max-width: 1160px) {
+      .grid { grid-template-columns: 1fr; }
+    }
+    .panel { padding: 14px; }
+    .stack { display: grid; gap: 14px; }
+    .label {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: #9db8de;
+      margin-bottom: 8px;
+    }
+    .small {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .row { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+    .status { display:flex; gap:10px; flex-wrap:wrap; margin-top:8px; }
+    .badge {
+      padding: 7px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      border: 1px solid #2b4a74;
+      background: #112240;
+      color: #d3e2ff;
+    }
+    .kv {
+      display:grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap:10px;
+    }
+    .card {
+      background: linear-gradient(180deg, #0b1528, #08111f);
+      border: 1px solid #172d4f;
+      border-radius: 18px;
+      padding: 12px;
+    }
+    .mono {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      color: #d9e8ff;
+      word-break: break-word;
+    }
+    .outbox {
+      font-size: 15px;
+      color: #fff3ca;
+      font-weight: 700;
+    }
+    svg {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 22px;
+      background: linear-gradient(180deg, #06101d 0%, #030812 100%);
+      border: 1px solid #1b3557;
+    }
+    .slider {
+      width: 100%;
+      accent-color: var(--blue);
+    }
+    .legend {
+      display:flex;
+      flex-wrap:wrap;
+      gap:12px;
+      margin-top:10px;
+      color:var(--muted);
+      font-size:12px;
+    }
+    .legend .item { display:flex; gap:6px; align-items:center; }
+    .dot { width:11px; height:11px; border-radius:50%; }
+    .signature {
+      text-align:center;
+      margin-top:10px;
+      font-size:13px;
+      color:#8ca7cf;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <input id="maxVal" type="number" min="3" max="63" value="15" title="maximum universe" />
+      <input id="rows" type="number" min="2" max="12" value="4" title="PE rows" />
+      <input id="cols" type="number" min="2" max="16" value="8" title="PE columns" />
+      <button id="btnApplyInput">Apply vector</button>
+      <button id="btnRandom">Random vector</button>
+      <button id="btnInject">1) Spatial ingest</button>
+      <button id="btnReduce">2) Local accumulation</button>
+      <button id="btnScan">3) Distributed scan</button>
+      <button id="btnAuto">▶ Auto</button>
+      <button id="btnReset">Reset</button>
+      <div class="pill">many-core mode: key → owner tile → local count → ordered scan</div>
+    </div>
+
+    <div class="panel" style="margin-bottom:14px;">
+      <div class="label">Input vector</div>
+      <textarea id="vectorInput">9,3,12,1,7,4,14,2,12,3,0,15,7,7,1,10</textarea>
+      <div class="small" style="margin-top:8px;">
+        This version reinterprets DialSort as a spatial accelerator inspired by Cerebras: each PE owns a key range, inputs travel toward their owner tile, duplicates accumulate locally, and order emerges from a scan of the universe, not from comparisons.
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="stack">
+        <div class="panel">
+          <div class="label">Wafer-scale spatial view</div>
+          <svg id="viz" viewBox="0 0 1500 920" preserveAspectRatio="xMidYMid meet"></svg>
+          <div class="legend">
+            <div class="item"><span class="dot" style="background:#57a8ff"></span> injected packet</div>
+            <div class="item"><span class="dot" style="background:#6bf5b0"></span> active owner tile</div>
+            <div class="item"><span class="dot" style="background:#ffc857"></span> active cell/counter</div>
+            <div class="item"><span class="dot" style="background:#88f0b2"></span> scan wavefront</div>
+            <div class="item"><span class="dot" style="background:#b597ff"></span> tile sovereign range</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="stack">
+        <div class="panel">
+          <div class="label">Exploration controls</div>
+          <input id="scanSlider" class="slider" type="range" min="0" max="15" step="1" value="0" />
+          <div class="status">
+            <div class="badge">fase: <span id="phaseTxt">idle</span></div>
+            <div class="badge">scan k: <span id="scanTxt">0</span></div>
+            <div class="badge">PEs: <span id="peTxt">32</span></div>
+            <div class="badge">keys: <span id="nTxt">0</span></div>
+            <div class="badge">duplicates: <span id="dupTxt">0</span></div>
+            <div class="badge">approx. hops: <span id="hopTxt">0</span></div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="label">Signals and metrics</div>
+          <div class="kv">
+            <div class="card">
+              <div class="small">Ownership map</div>
+              <div id="ownerText" class="mono"></div>
+            </div>
+            <div class="card">
+              <div class="small">Histograma H[k]</div>
+              <div id="histText" class="mono"></div>
+            </div>
+            <div class="card">
+              <div class="small">Tile load</div>
+              <div id="loadText" class="mono"></div>
+            </div>
+            <div class="card">
+              <div class="small">Sorted output</div>
+              <div id="outText" class="outbox mono"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="label">Technical reading</div>
+          <div class="small" id="explainText">
+            Waiting. First inject the keys across the mesh; then accumulate; finally scan the universe 0..U to reveal the order.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="signature">DialSort Cerebras-Style Spatial Simulator — by Alexander Narváez - anarvae1@eafit.edu.co</div>
+
+  <script>
+    const state = {
+      maxVal: 15,
+      rows: 4,
+      cols: 8,
+      values: [9,3,12,1,7,4,14,2,12,3,0,15,7,7,1,10],
+      phase: 'idle',
+      scanLevel: 0,
+      injected: false,
+      reduced: false,
+      packets: [],
+      ownerHits: [],
+      tileLoads: [],
+      hist: [],
+      emitted: [],
+      scanTimer: null,
+      injectTimer: null,
+      reduceTimer: null,
+      animProgress: 0
+    };
+
+    const $ = (id) => document.getElementById(id);
+    const svg = $('viz');
+
+    function clamp(n, a, b) { return Math.max(a, Math.min(b, n)); }
+
+    function parseInput(text) {
+      return text.split(/[,\s]+/)
+        .map(s => s.trim())
+        .filter(Boolean)
+        .map(Number)
+        .filter(n => Number.isFinite(n) && n >= 0)
+        .map(n => clamp(Math.floor(n), 0, state.maxVal));
+    }
+
+    function randomVector(len = 16) {
+      return Array.from({ length: len }, () => Math.floor(Math.random() * (state.maxVal + 1)));
+    }
+
+    function stopTimers() {
+      ['scanTimer','injectTimer','reduceTimer'].forEach(k => {
+        if (state[k]) clearInterval(state[k]);
+        state[k] = null;
+      });
+    }
+
+    function numPE() { return state.rows * state.cols; }
+
+    function tileRanges() {
+      const total = numPE();
+      const U = state.maxVal + 1;
+      const base = Math.floor(U / total);
+      const extra = U % total;
+      let start = 0;
+      const ranges = [];
+      for (let t = 0; t < total; t++) {
+        const size = base + (t < extra ? 1 : 0);
+        const end = size > 0 ? start + size - 1 : start - 1;
+        ranges.push({ tile: t, start, end, size });
+        start = end + 1;
+      }
+      return ranges;
+    }
+
+    function ownerOfKey(k) {
+      const ranges = tileRanges();
+      for (const r of ranges) {
+        if (r.size > 0 && k >= r.start && k <= r.end) return r.tile;
+      }
+      return 0;
+    }
+
+    function tileRow(tile) { return Math.floor(tile / state.cols); }
+    function tileCol(tile) { return tile % state.cols; }
+
+    function computeState() {
+      const total = numPE();
+      state.tileLoads = Array(total).fill(0);
+      state.ownerHits = Array(total).fill(null).map(() => []);
+      state.hist = Array(state.maxVal + 1).fill(0);
+      let hopSum = 0;
+
+      state.values.forEach((v, i) => {
+        const owner = ownerOfKey(v);
+        const srcCol = i % state.cols;
+        const srcRow = 0;
+        const dstCol = tileCol(owner);
+        const dstRow = tileRow(owner);
+        const hops = Math.abs(srcCol - dstCol) + Math.abs(srcRow - dstRow);
+        hopSum += hops;
+        state.tileLoads[owner]++;
+        state.ownerHits[owner].push({ value: v, idx: i, hops });
+        state.hist[v]++;
+      });
+
+      state.hopSum = hopSum;
+      state.emitted = [];
+      state.packets = state.values.map((v, i) => ({
+        value: v,
+        owner: ownerOfKey(v),
+        idx: i,
+        progress: 0
+      }));
+    }
+
+    function duplicateCount() {
+      return state.hist.reduce((a, c) => a + Math.max(0, c - 1), 0);
+    }
+
+    function orderedOutput(limit = state.maxVal) {
+      const out = [];
+      for (let k = 0; k <= limit; k++) {
+        for (let i = 0; i < state.hist[k]; i++) out.push(k);
+      }
+      return out;
+    }
+
+    function updatePanels() {
+      $('phaseTxt').textContent = state.phase;
+      $('scanTxt').textContent = state.scanLevel;
+      $('peTxt').textContent = numPE();
+      $('nTxt').textContent = state.values.length;
+      $('dupTxt').textContent = duplicateCount();
+      $('hopTxt').textContent = state.hopSum || 0;
+      $('scanSlider').max = String(state.maxVal);
+      $('scanSlider').value = String(state.scanLevel);
+
+      const ranges = tileRanges();
+      $('ownerText').textContent = ranges
+        .filter(r => r.size > 0)
+        .map(r => `PE${r.tile}[${r.start}-${r.end}]`)
+        .join('  ');
+
+      $('histText').textContent = state.hist
+        .map((c, k) => `H[${k}]=${c}`)
+        .join('  ');
+
+      $('loadText').textContent = state.tileLoads
+        .map((c, t) => c ? `PE${t}:${c}` : null)
+        .filter(Boolean)
+        .join('  ') || 'no activity';
+
+      let out = '—';
+      if (state.phase === 'done') out = `[ ${orderedOutput().join(' → ')} ]`;
+      else if (state.phase === 'scan') out = `[ ${orderedOutput(state.scanLevel).join(' → ')} ]`;
+      else if (state.reduced) out = `[ ready for scan ]`;
+      $('outText').textContent = out;
+
+      const explain = {
+        idle: 'Waiting. Each PE owns a sovereign range of the universe. Here the question is not “who is smaller than whom,” but “which tile owns each key.”',
+        inject: 'Spatial ingest. Each key travels across the mesh to its owner tile. This phase models routing cost / hop count in a many-core accelerator.',
+        reduce: 'Local accumulation. Duplicates no longer compete globally: they are consolidated inside the owner tile as local counters H[k].',
+        scan: 'Distributed scan. The read wave traverses k=0..U. If H[k] > 0, the output emits k exactly as many times as the counter indicates.',
+        done: 'Full readout complete. Order emerged from addressable space and local counters, not from comparisons or prefix-sum.'
+      };
+      $('explainText').textContent = explain[state.phase] || explain.idle;
+    }
+
+    function rect(x, y, w, h, fill, stroke = 'none', rx = 10, sw = 1, extra = '') {
+      return `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${rx}" fill="${fill}" stroke="${stroke}" stroke-width="${sw}" ${extra}/>`;
+    }
+    function text(x, y, str, size = 14, fill = '#e6f0ff', weight = 600, anchor = 'middle') {
+      return `<text x="${x}" y="${y}" fill="${fill}" font-size="${size}" font-weight="${weight}" text-anchor="${anchor}" font-family="Inter, sans-serif">${str}</text>`;
+    }
+    function line(x1, y1, x2, y2, stroke = '#28476f', width = 2, dash = '') {
+      return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${stroke}" stroke-width="${width}" ${dash ? `stroke-dasharray="${dash}"` : ''} stroke-linecap="round" />`;
+    }
+    function polyline(points, stroke = '#28476f', width = 2, dash = '', fill = 'none') {
+      const pts = points.map(p => `${p.x},${p.y}`).join(' ');
+      return `<polyline points="${pts}" fill="${fill}" stroke="${stroke}" stroke-width="${width}" ${dash ? `stroke-dasharray="${dash}"` : ''} stroke-linecap="round" stroke-linejoin="round" />`;
+    }
+    function circle(x, y, r, fill, stroke = 'none', sw = 1) {
+      return `<circle cx="${x}" cy="${y}" r="${r}" fill="${fill}" stroke="${stroke}" stroke-width="${sw}" />`;
+    }
+
+    function manhattanPath(packet, lanePoints, tileCenters) {
+      const start = lanePoints[packet.idx];
+      const end = tileCenters[packet.owner];
+      const turnY = end.y;
+      return [
+        { x: start.x, y: start.y },
+        { x: start.x, y: turnY },
+        { x: end.x, y: turnY }
+      ];
+    }
+
+    function packetPosition(packet, lanePoints, tileCenters) {
+      const pts = manhattanPath(packet, lanePoints, tileCenters);
+      const t = clamp(packet.progress, 0, 1);
+      const a = pts[0], b = pts[1], c = pts[2];
+      const len1 = Math.abs(b.y - a.y);
+      const len2 = Math.abs(c.x - b.x);
+      const total = Math.max(1, len1 + len2);
+      const dist = t * total;
+      if (dist <= len1) {
+        return { x: a.x, y: a.y + Math.sign(b.y - a.y) * dist };
+      }
+      const d2 = dist - len1;
+      return { x: b.x + Math.sign(c.x - b.x) * d2, y: b.y };
+    }
+
+    function render() {
+      const W = 1500, H = 920;
+      const parts = [];
+      parts.push(`
+        <defs>
+          <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#06101d" />
+            <stop offset="100%" stop-color="#030812" />
+          </linearGradient>
+          <linearGradient id="chipGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#0a1325" />
+            <stop offset="100%" stop-color="#07101f" />
+          </linearGradient>
+        </defs>
+      `);
+      parts.push(rect(0, 0, W, H, 'url(#bg)'));
+      parts.push(rect(16, 16, W - 32, H - 32, 'url(#chipGrad)', '#173257', 28, 2));
+      parts.push(text(46, 44, 'DIALSORT · CEREBRAS-STYLE SPATIAL SIMULATOR', 18, '#dceaff', 800, 'start'));
+
+      const laneArea = { x: 54, y: 84, w: 1392, h: 96 };
+      const meshArea = { x: 54, y: 220, w: 900, h: 620 };
+      const histArea = { x: 994, y: 220, w: 430, h: 280 };
+      const scanArea = { x: 994, y: 530, w: 430, h: 310 };
+
+      parts.push(text(laneArea.x, 108, 'INPUT LANES', 14, '#9cb6dc', 700, 'start'));
+      parts.push(text(meshArea.x, 204, 'SPATIAL PE MESH', 14, '#9cb6dc', 700, 'start'));
+      parts.push(text(histArea.x, 204, 'LOCAL HISTOGRAM / OWNER COUNTS', 14, '#9cb6dc', 700, 'start'));
+      parts.push(text(scanArea.x, 514, 'ORDERED SCAN WAVE', 14, '#9cb6dc', 700, 'start'));
+
+      parts.push(rect(laneArea.x, laneArea.y, laneArea.w, laneArea.h, '#091221', '#1d395e', 18, 1.5));
+      parts.push(rect(meshArea.x, meshArea.y, meshArea.w, meshArea.h, '#091221', '#1d395e', 18, 1.5));
+      parts.push(rect(histArea.x, histArea.y, histArea.w, histArea.h, '#091221', '#1d395e', 18, 1.5));
+      parts.push(rect(scanArea.x, scanArea.y, scanArea.w, scanArea.h, '#091221', '#1d395e', 18, 1.5));
+
+      const laneGap = 8;
+      const laneW = Math.min(70, (laneArea.w - laneGap * (Math.max(1, state.values.length) - 1)) / Math.max(1, state.values.length));
+      const laneTotal = laneW * Math.max(1, state.values.length) + laneGap * (Math.max(1, state.values.length) - 1);
+      const laneStart = laneArea.x + (laneArea.w - laneTotal) / 2;
+      const lanePoints = [];
+      state.values.forEach((v, i) => {
+        const x = laneStart + i * (laneW + laneGap);
+        const y = laneArea.y + 22;
+        lanePoints.push({ x: x + laneW / 2, y: y + 34 });
+        parts.push(rect(x, y, laneW, 48, '#10203b', '#294972', 12, 1.4));
+        parts.push(text(x + laneW / 2, y + 20, `d${i+1}`, 11, '#8ca7cf', 700));
+        parts.push(text(x + laneW / 2, y + 38, String(v), 16, '#e7f1ff', 800));
+        parts.push(line(x + laneW / 2, y + 48, x + laneW / 2, meshArea.y - 14, '#183d66', 1.5, '4 6'));
+      });
+
+      const tileGap = 12;
+      const tileW = (meshArea.w - tileGap * (state.cols + 1)) / state.cols;
+      const tileH = (meshArea.h - tileGap * (state.rows + 1)) / state.rows;
+      const ranges = tileRanges();
+      const tileCenters = [];
+
+      for (let r = 0; r < state.rows; r++) {
+        for (let c = 0; c < state.cols; c++) {
+          const t = r * state.cols + c;
+          const x = meshArea.x + tileGap + c * (tileW + tileGap);
+          const y = meshArea.y + tileGap + r * (tileH + tileGap);
+          const range = ranges[t];
+          const load = state.tileLoads[t] || 0;
+          const active = load > 0;
+          const isScanOwner = range && range.size > 0 && state.phase === 'scan' && state.scanLevel >= range.start && state.scanLevel <= range.end;
+          const fill = active ? (isScanOwner ? '#164739' : '#14325a') : '#0d1830';
+          parts.push(rect(x, y, tileW, tileH, fill, active ? '#4a7fba' : '#203c62', 14, 1.6));
+          if (range && range.size > 0) {
+            parts.push(rect(x + 10, y + 10, tileW - 20, 26, 'rgba(181,151,255,.12)', '#5a60a8', 10, 1));
+            parts.push(text(x + tileW / 2, y + 28, `PE${t} · [${range.start}-${range.end}]`, 12, '#dfe7ff', 800));
+          } else {
+            parts.push(text(x + tileW / 2, y + 28, `PE${t} · —`, 12, '#7d97bf', 700));
+          }
+          parts.push(text(x + tileW / 2, y + tileH - 18, `load ${load}`, 12, active ? '#6bf5b0' : '#7892ba', 700));
+
+          const center = { x: x + tileW / 2, y: y + tileH / 2 };
+          tileCenters.push(center);
+          parts.push(circle(center.x, center.y, 10, active ? '#6bf5b0' : '#203657', active ? '#d8fff0' : '#44668e', 1.3));
+
+          if (state.reduced && active) {
+            const hits = state.ownerHits[t] || [];
+            const grouped = {};
+            hits.forEach(h => grouped[h.value] = (grouped[h.value] || 0) + 1);
+            const keys = Object.keys(grouped).map(Number).sort((a,b) => a-b).slice(0, 4);
+            keys.forEach((k, idx) => {
+              const bx = x + 16 + idx * 34;
+              const by = y + tileH - 54;
+              parts.push(rect(bx, by, 28, 22, '#2a220a', '#8f6b12', 8, 1));
+              parts.push(text(bx + 14, by + 15, `${k}:${grouped[k]}`, 10, '#fff1c0', 800));
+            });
+          }
+        }
+      }
+
+      for (let r = 0; r <= state.rows; r++) {
+        const y = meshArea.y + tileGap / 2 + r * (tileH + tileGap);
+        parts.push(line(meshArea.x + 6, y, meshArea.x + meshArea.w - 6, y, '#102846', 1));
+      }
+      for (let c = 0; c <= state.cols; c++) {
+        const x = meshArea.x + tileGap / 2 + c * (tileW + tileGap);
+        parts.push(line(x, meshArea.y + 6, x, meshArea.y + meshArea.h - 6, '#102846', 1));
+      }
+
+      if (state.injected || state.phase === 'inject') {
+        state.packets.forEach(packet => {
+          const pos = packetPosition(packet, lanePoints, tileCenters);
+          const route = manhattanPath(packet, lanePoints, tileCenters);
+          parts.push(polyline(route, '#234b7c', 1.5, '4 5'));
+          parts.push(circle(pos.x, pos.y, 9, '#57a8ff', '#d8eeff', 2));
+          parts.push(text(pos.x, pos.y + 4, String(packet.value), 10, '#06101d', 800));
+        });
+      }
+
+      const U = state.maxVal + 1;
+      const rowH = (histArea.h - 46) / U;
+      for (let k = 0; k < U; k++) {
+        const y = histArea.y + 16 + (U - 1 - k) * rowH;
+        const active = state.phase === 'scan' && state.scanLevel === k;
+        parts.push(rect(histArea.x + 12, y, histArea.w - 24, rowH - 4, active ? 'rgba(87,168,255,.14)' : '#0f1b31', active ? '#5aaeff' : '#173257', 8, 1));
+        parts.push(text(histArea.x + 34, y + rowH * 0.62, `k=${k}`, 11, active ? '#cfe9ff' : '#89a6cf', 700, 'start'));
+        const barW = (histArea.w - 120) * (state.values.length ? state.hist[k] / state.values.length : 0);
+        parts.push(rect(histArea.x + 86, y + 5, barW, rowH - 14, state.hist[k] ? '#ffc857' : '#203657', 'none', 8, 1));
+        parts.push(text(histArea.x + histArea.w - 18, y + rowH * 0.62, String(state.hist[k]), 11, '#fff1c0', 800, 'end'));
+      }
+
+      const scanX = scanArea.x + 64;
+      const scanTop = scanArea.y + 22;
+      const scanBottom = scanArea.y + scanArea.h - 22;
+      parts.push(line(scanX, scanTop, scanX, scanBottom, '#355c8c', 4));
+      const scanRowH = (scanBottom - scanTop) / U;
+      const pointerY = scanBottom - (state.scanLevel + 0.5) * scanRowH;
+      if (state.phase === 'scan' || state.phase === 'done') {
+        parts.push(circle(scanX, pointerY, 10, '#88f0b2', '#e3fff1', 2));
+        parts.push(line(scanX, pointerY, scanArea.x + scanArea.w - 32, pointerY, '#2c805f', 2, '6 5'));
+      }
+      parts.push(text(scanArea.x + 102, scanArea.y + 34, 'scan stream', 13, '#9cb6dc', 700, 'start'));
+      const shown = state.phase === 'done' ? orderedOutput() : (state.phase === 'scan' ? orderedOutput(state.scanLevel) : []);
+      const chunked = shown.length ? shown.join('  ') : '—';
+      parts.push(text(scanArea.x + 102, scanArea.y + 68, chunked, 18, '#fff0c4', 800, 'start'));
+      parts.push(text(scanArea.x + 102, scanArea.y + 108, 'No comparator. No prefix-sum. Only owner lookup + local accumulation + scan.', 12, '#9ec2db', 600, 'start'));
+
+      svg.innerHTML = parts.join('');
+    }
+
+    function syncAndRender() {
+      computeState();
+      updatePanels();
+      render();
+    }
+
+    function setPhase(phase) {
+      state.phase = phase;
+      updatePanels();
+      render();
+    }
+
+    function disableRunButtons(disabled) {
+      ['btnInject','btnReduce','btnScan','btnAuto'].forEach(id => $(id).disabled = disabled);
+    }
+
+    async function runInject() {
+      if (state.phase !== 'idle') return;
+      stopTimers();
+      disableRunButtons(true);
+      state.injected = true;
+      state.reduced = false;
+      state.packets.forEach(p => p.progress = 0);
+      setPhase('inject');
+      let t = 0;
+      await new Promise(resolve => {
+        state.injectTimer = setInterval(() => {
+          t += 0.08;
+          state.packets.forEach(p => p.progress = clamp(t, 0, 1));
+          render();
+          if (t >= 1) {
+            clearInterval(state.injectTimer);
+            state.injectTimer = null;
+            state.packets.forEach(p => p.progress = 1);
+            setPhase('idle');
+            disableRunButtons(false);
+            resolve();
+          }
+        }, 45);
+      });
+    }
+
+    async function runReduce() {
+      if (state.phase !== 'idle' || !state.injected) return;
+      stopTimers();
+      disableRunButtons(true);
+      setPhase('reduce');
+      await new Promise(resolve => {
+        let flips = 0;
+        state.reduceTimer = setInterval(() => {
+          flips++;
+          render();
+          if (flips > 8) {
+            clearInterval(state.reduceTimer);
+            state.reduceTimer = null;
+            state.reduced = true;
+            setPhase('idle');
+            disableRunButtons(false);
+            resolve();
+          }
+        }, 90);
+      });
+    }
+
+    async function runScan() {
+      if (state.phase !== 'idle' || !state.reduced) return;
+      stopTimers();
+      disableRunButtons(true);
+      state.scanLevel = 0;
+      setPhase('scan');
+      await new Promise(resolve => {
+        state.scanTimer = setInterval(() => {
+          state.scanLevel += 1;
+          if (state.scanLevel > state.maxVal) {
+            clearInterval(state.scanTimer);
+            state.scanTimer = null;
+            state.scanLevel = state.maxVal;
+            setPhase('done');
+            disableRunButtons(false);
+            resolve();
+          } else {
+            updatePanels();
+            render();
+          }
+        }, 360);
+      });
+    }
+
+    async function runAuto() {
+      if (state.phase !== 'idle') return;
+      await runInject();
+      await runReduce();
+      await runScan();
+    }
+
+    $('btnApplyInput').addEventListener('click', () => {
+      stopTimers();
+      state.maxVal = clamp(Number($('maxVal').value) || 15, 3, 63);
+      state.rows = clamp(Number($('rows').value) || 4, 2, 12);
+      state.cols = clamp(Number($('cols').value) || 8, 2, 16);
+      state.values = parseInput($('vectorInput').value);
+      if (!state.values.length) state.values = [0];
+      state.values = state.values.map(v => clamp(v, 0, state.maxVal));
+      $('vectorInput').value = state.values.join(',');
+      state.scanLevel = 0;
+      state.injected = false;
+      state.reduced = false;
+      setPhase('idle');
+      syncAndRender();
+    });
+
+    $('btnRandom').addEventListener('click', () => {
+      stopTimers();
+      state.maxVal = clamp(Number($('maxVal').value) || 15, 3, 63);
+      state.rows = clamp(Number($('rows').value) || 4, 2, 12);
+      state.cols = clamp(Number($('cols').value) || 8, 2, 16);
+      state.values = randomVector(16);
+      $('vectorInput').value = state.values.join(',');
+      state.scanLevel = 0;
+      state.injected = false;
+      state.reduced = false;
+      setPhase('idle');
+      syncAndRender();
+    });
+
+    $('btnInject').addEventListener('click', runInject);
+    $('btnReduce').addEventListener('click', runReduce);
+    $('btnScan').addEventListener('click', runScan);
+    $('btnAuto').addEventListener('click', runAuto);
+
+    $('btnReset').addEventListener('click', () => {
+      stopTimers();
+      state.scanLevel = 0;
+      state.injected = false;
+      state.reduced = false;
+      setPhase('idle');
+      syncAndRender();
+    });
+
+    $('scanSlider').addEventListener('input', (e) => {
+      stopTimers();
+      if (!state.reduced && state.phase !== 'done') return;
+      state.scanLevel = clamp(Number(e.target.value), 0, state.maxVal);
+      setPhase('scan');
+    });
+
+    ['maxVal','rows','cols'].forEach(id => {
+      $(id).addEventListener('change', () => {
+        stopTimers();
+        state.maxVal = clamp(Number($('maxVal').value) || 15, 3, 63);
+        state.rows = clamp(Number($('rows').value) || 4, 2, 12);
+        state.cols = clamp(Number($('cols').value) || 8, 2, 16);
+        state.values = state.values.map(v => clamp(v, 0, state.maxVal));
+        $('vectorInput').value = state.values.join(',');
+        state.scanLevel = clamp(state.scanLevel, 0, state.maxVal);
+        state.injected = false;
+        state.reduced = false;
+        setPhase('idle');
+        syncAndRender();
+      });
+    });
+
+    syncAndRender();
+  </script>
+</body>
+</html>

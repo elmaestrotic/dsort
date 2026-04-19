@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>DialSort · Sovereign Dial Model</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #05080e;
+      --surface: #0b0f18;
+      --surface2: #101520;
+      --surface3: #18202e;
+      --border: #1c2a3e;
+      --border2: #263a54;
+      --accent: #f59e0b;
+      --accent2: #3b82f6;
+      --accent3: #10b981;
+      --accent4: #ef4444;
+      --purple: #a78bfa;
+      --text: #ddeeff;
+      --text2: #7a9abf;
+      --text3: #3d5570;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--text); min-height: 100vh;
+    }
+    body::before {
+      content: ''; position: fixed; inset: 0;
+      background-image:
+        linear-gradient(rgba(59,130,246,0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(59,130,246,0.02) 1px, transparent 1px);
+      background-size: 32px 32px;
+      pointer-events: none; z-index: 0;
+    }
+    .wrap {
+      position: relative; z-index: 1;
+      max-width: 1080px; margin: 0 auto;
+      padding: 22px 16px 48px;
+    }
+    .chip {
+      display: inline-block;
+      background: var(--surface3); border: 1px solid var(--border2);
+      color: var(--accent2); font-size: 9px; font-weight: 700;
+      letter-spacing: 2px; padding: 3px 10px; border-radius: 4px;
+      margin-bottom: 10px; text-transform: uppercase;
+    }
+    h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(1.2rem, 2.8vw, 1.8rem);
+      font-weight: 800; line-height: 1.15; margin-bottom: 8px;
+    }
+    h1 em { color: var(--accent); font-style: normal; }
+    .subtitle {
+      font-size: 11px; color: var(--text2);
+      line-height: 1.9; max-width: 740px; margin-bottom: 18px;
+    }
+    .subtitle b { color: var(--accent3); }
+    .subtitle span { color: var(--accent); }
+
+    /* COMPLEXITY CARDS */
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 9px; margin-bottom: 16px;
+    }
+    .card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 10px; padding: 11px 13px; position: relative; overflow: hidden;
+    }
+    .card::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px; }
+    .card.g::after { background: var(--accent3); }
+    .card.a::after { background: var(--accent); }
+    .card.r::after { background: var(--accent4); }
+    .card-lbl { font-size: 9px; letter-spacing: 1.2px; text-transform: uppercase; color: #8ab4d4; font-weight: 600; margin-bottom: 4px; }
+    .card-big { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 800; margin-bottom: 3px; }
+    .card.g .card-big { color: var(--accent3); }
+    .card.a .card-big { color: var(--accent); }
+    .card.r .card-big { color: var(--accent4); }
+    .card-desc { font-size: 9.5px; color: #a8c4dc; line-height: 1.6; }
+    .card-proof { font-size: 9px; color: #7aa0bc; border-top: 1px solid #2a3f58; margin-top: 7px; padding-top: 6px; line-height: 1.6; font-style: italic; }
+
+    /* MANUAL SLIDER */
+    .manual-wrap {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 10px; padding: 12px 16px; margin-bottom: 10px;
+    }
+    .manual-header {
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 10px; flex-wrap: wrap;
+    }
+    .manual-title { font-size: 10px; color: var(--accent3); font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
+    .manual-hint  { font-size: 9.5px; color: #7aa8c8; }
+    .slider-row { display: flex; align-items: center; gap: 12px; }
+    .slider-val-box {
+      background: var(--surface2); border: 1px solid var(--border2);
+      color: var(--accent3); font-weight: 700; font-size: 13px;
+      padding: 3px 10px; border-radius: 6px; min-width: 42px; text-align: center;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    input[type="range"] {
+      flex: 1; height: 8px; background: var(--surface3);
+      border-radius: 4px; -webkit-appearance: none;
+      appearance: none; cursor: pointer; touch-action: none;
+    }
+    input[type="range"]::-webkit-slider-runnable-track {
+      height: 8px; border-radius: 4px;
+      background: linear-gradient(90deg, rgba(16,185,129,0.3), rgba(16,185,129,0.1));
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none; appearance: none;
+      width: 24px; height: 24px; margin-top: -8px;
+      border-radius: 50%; background: var(--accent3);
+      box-shadow: 0 0 12px rgba(16,185,129,0.8); cursor: grab;
+      border: 2px solid rgba(255,255,255,0.2);
+    }
+    input[type="range"]::-webkit-slider-thumb:active { cursor: grabbing; }
+    input[type="range"]::-moz-range-thumb {
+      width: 24px; height: 24px; border-radius: 50%;
+      background: var(--accent3); cursor: grab;
+      box-shadow: 0 0 12px rgba(16,185,129,0.8);
+      border: 2px solid rgba(255,255,255,0.2);
+    }
+    .manual-preview {
+      margin-top: 9px; font-size: 10px; color: var(--text2);
+      background: var(--surface2); border-left: 3px solid var(--accent3);
+      padding: 7px 11px; border-radius: 6px; line-height: 1.7; min-height: 36px;
+    }
+
+    /* CONTROLS */
+    .ctrl {
+      display: flex; flex-wrap: wrap; gap: 7px; align-items: center;
+      background: var(--surface); border: 1px solid var(--border);
+      padding: 10px 13px; border-radius: 10px; margin-bottom: 10px;
+    }
+    input[type="number"] {
+      background: var(--surface2); border: 1px solid var(--border2);
+      color: var(--accent); padding: 5px 9px; border-radius: 6px;
+      width: 56px; font-family: 'JetBrains Mono', monospace;
+      font-weight: 700; font-size: 13px; text-align: center;
+    }
+    input[type="number"]:focus { outline: none; border-color: var(--accent2); }
+    .btn {
+      background: var(--surface2); border: 1px solid var(--border2);
+      color: var(--text); padding: 5px 13px; border-radius: 6px;
+      font-family: 'JetBrains Mono', monospace; font-size: 10.5px;
+      font-weight: 600; cursor: pointer; transition: all 0.13s; white-space: nowrap;
+    }
+    .btn:hover { background: var(--surface3); border-color: var(--accent2); color: var(--accent2); }
+    .btn:active { transform: scale(0.97); }
+    .btn:disabled { opacity: 0.3; cursor: not-allowed; transform: none; }
+    .btn-fall  { background: rgba(167,139,250,0.1); border-color: var(--purple); color: var(--purple); }
+    .btn-fall:hover  { background: rgba(167,139,250,0.2); }
+    .btn-sweep { background: rgba(16,185,129,0.09); border-color: var(--accent3); color: var(--accent3); }
+    .btn-sweep:hover { background: rgba(16,185,129,0.18); }
+    .btn-both  { background: rgba(245,158,11,0.09); border-color: var(--accent); color: var(--accent); }
+    .btn-both:hover  { background: rgba(245,158,11,0.18); }
+
+    /* SEQ */
+    .seq {
+      display: flex; flex-wrap: wrap; gap: 6px; align-items: center;
+      min-height: 44px; background: var(--surface); border: 1px solid var(--border);
+      padding: 8px 12px; border-radius: 10px; margin-bottom: 10px;
+    }
+    .badge {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 36px; height: 36px; background: var(--surface2);
+      border: 1px solid var(--border2); border-radius: 7px;
+      color: var(--accent); font-size: 0.9rem; font-weight: 700;
+    }
+    .seq-info { font-size: 10px; color: #8ab4d4; margin-left: 5px; font-weight: 500; }
+
+    /* PHASE */
+    .phase {
+      display: flex; gap: 10px; align-items: center;
+      background: var(--surface); border: 1px solid var(--border);
+      padding: 9px 13px; border-radius: 10px; margin-bottom: 10px;
+      font-size: 10.5px; flex-wrap: wrap;
+    }
+    .pdot { width: 8px; height: 8px; border-radius: 50%; background: var(--surface3); border: 1px solid var(--border2); transition: all 0.3s; flex-shrink: 0; }
+    .pdot.p-fall  { background: var(--purple); box-shadow: 0 0 8px var(--purple); }
+    .pdot.p-sweep { background: var(--accent3); box-shadow: 0 0 8px var(--accent3); }
+    .plbl { color: var(--text2); }
+    .plbl.active { color: var(--text); font-weight: 700; }
+
+    /* STATS */
+    .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px,1fr)); gap: 7px; margin-bottom: 10px; }
+    .scard { background: var(--surface); border: 1px solid var(--border); border-radius: 9px; padding: 9px 11px; text-align: center; }
+    .slbl { font-size: 9px; color: #8ab4d4; letter-spacing: 1px; text-transform: uppercase; font-weight: 600; margin-bottom: 4px; }
+    .sval { font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 800; }
+    .ssub { font-size: 9.5px; color: #7aa8c8; margin-top: 2px; }
+
+    /* CANVAS */
+    .cw { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; margin-bottom: 10px; }
+    canvas { display: block; width: 100%; }
+
+    /* STATUS */
+    .status {
+      background: var(--surface); border: 1px solid var(--border);
+      border-left: 3px solid var(--accent2);
+      border-radius: 10px; padding: 9px 13px; margin-bottom: 10px;
+      font-size: 10.5px; color: var(--text2); line-height: 1.75; min-height: 44px;
+    }
+
+    /* OUTPUT */
+    .out {
+      background: var(--surface); border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 10px; padding: 9px 13px; margin-bottom: 10px;
+      font-size: 10.5px; color: var(--text2);
+    }
+    .out .val { color: var(--accent); font-weight: 700; font-size: 12px; letter-spacing: 1px; }
+
+    /* LEGEND */
+    .legend { display: flex; flex-wrap: wrap; gap: 12px; font-size: 9.5px; color: #7aa8c8; }
+    .leg { display: flex; align-items: center; gap: 5px; }
+    .dot { width: 9px; height: 9px; border-radius: 50%; }
+
+    .hl-g { color: var(--accent3); font-weight: 700; }
+    .hl-r { color: var(--accent4); font-weight: 700; }
+    .hl-a { color: var(--accent); font-weight: 700; }
+    .hl-b { color: var(--accent2); font-weight: 700; }
+    .hl-p { color: var(--purple); font-weight: 700; }
+
+    @media(max-width:560px){ .cards { grid-template-columns: 1fr 1fr; } }
+  </style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="chip">DialSort · by Alexander Narvaez — anarvae1@eafit.edu.co</div>
+  <h1>DialSort — <em>Sovereign Dial Model</em><br>
+    Order is not computed. It is <em>revealed</em>.</h1>
+  <p class="subtitle">
+    This simulator demonstrates the <b>Sovereign Dial Model of DialSort</b> — the conceptual foundation of Tier 2 and Tier 3 of the paper,
+    targeting massively parallel hardware implementations: FPGAs, GPUs, neuromorphic architectures, and
+    <b>photonic computing</b>.
+    Each number in the unsorted input vector falls simultaneously into its own sovereign tube,
+    stopping at the exact height corresponding to its value — not next to the previous one, but at its own vertical coordinate.
+    The upward light beam represents a <b>light wave propagating through an array of optical resonators</b>:
+    each tube is a resonator that, when active, couples energy and emits as the wave passes — exactly as in real photonic implementations
+    where no comparator circuit or control signal evaluates anything.
+    The wave simply propagates and active resonators respond through resonance, at the speed of light.
+    In FPGAs the sweep is discrete and clock-driven; in photonics it is continuous and simultaneous — the Sovereign Model captures both.
+    The <b>Big-O complexity metrics</b> shown during the animation reflect the real cost of each operation:
+    <b>O(1)</b> per drop, <b>O(1)</b> per level resonance, <b>O(U+n)</b> total —
+    <b>zero</b> key comparisons, <b>zero</b> prefix-sum.
+  </p>
+
+  <!-- COMPLEXITY CARDS -->
+  <div class="cards">
+    <div class="card g">
+      <div class="card-lbl">Drop of each key k</div>
+      <div class="card-big">O(1)</div>
+      <div class="card-desc">Value k determines the stopping height. The tube is already assigned. One direct access — no search, no magnitude comparison.</div>
+      <div class="card-proof">Value k → height k. The same number acts as data and as vertical coordinate simultaneously.</div>
+    </div>
+    <div class="card g">
+      <div class="card-lbl">Total ingestion (n keys)</div>
+      <div class="card-big">O(n)</div>
+      <div class="card-desc">n simultaneous and independent drops. Each tube is unaware of its neighbors. No forced sequentiality.</div>
+      <div class="card-proof">Counting sort: 3 mandatory sequential passes. Sovereign model: 1 parallel drop + 1 sweep.</div>
+    </div>
+    <div class="card g">
+      <div class="card-lbl">Read at level k</div>
+      <div class="card-big">O(1)</div>
+      <div class="card-desc">The beam passes through level k. If a marker is there, it illuminates. No evaluation — it is a physical property of the medium.</div>
+      <div class="card-proof">No internal tube traversal. No neighbor comparison. Present or absent state.</div>
+    </div>
+    <div class="card a">
+      <div class="card-lbl">Full geometric sweep</div>
+      <div class="card-big">O(U + n)</div>
+      <div class="card-desc">U levels traversed + n elements emitted. The beam does not evaluate order — it reads it from the already-fixed heights.</div>
+      <div class="card-proof">Order emerges from the ascending geometric scan, not from key comparisons.</div>
+    </div>
+    <div class="card r">
+      <div class="card-lbl">Prefix-sum pass</div>
+      <div class="card-big">ELIMINATED</div>
+      <div class="card-desc">Counting sort requires O(U) to convert frequencies into output positions. Here position is already encoded in height.</div>
+      <div class="card-proof">Average 1.65× speedup over classic counting sort (46/48 benchmark configurations).</div>
+    </div>
+    <div class="card r">
+      <div class="card-lbl">Collisions</div>
+      <div class="card-big">IMPOSSIBLE</div>
+      <div class="card-desc">Each tube is sovereign and exclusive. Two keys sharing the same value are structurally impossible in the pure model.</div>
+      <div class="card-proof">The CRN handles duplicates in parallel variants through additive accumulation — no magnitude comparison.</div>
+    </div>
+  </div>
+
+  <!-- CONTROLS -->
+  <div class="ctrl">
+    <input type="number" id="val" min="0" max="15" value="7">
+    <button class="btn" onclick="addEl()">+ Add</button>
+    <button class="btn" onclick="loadEx()">Example: 9,3,12,1,7,4,14,2</button>
+    <button class="btn" onclick="randVec()">Random</button>
+    <button class="btn btn-fall"  id="btnFall"  onclick="runFall()">↓ Simultaneous drop</button>
+    <button class="btn btn-sweep" id="btnSweep" onclick="runSweep()">↑ Light beam sweep</button>
+    <button class="btn btn-both"  id="btnBoth"  onclick="runBoth()">▶ Auto</button>
+    <button class="btn" onclick="resetAll()">✕ Clear</button>
+  </div>
+
+  <!-- INPUT SEQ -->
+  <div class="seq" id="seqArea">
+    <span style="color:var(--text3);font-size:10px;">Load the example or add numbers (0–15)</span>
+  </div>
+
+  <!-- PHASE INDICATOR -->
+  <div class="phase">
+    <div class="pdot" id="pd0"></div>
+    <span class="plbl active" id="pl0">Waiting</span>
+    &nbsp;→&nbsp;
+    <div class="pdot" id="pd1"></div>
+    <span class="plbl" id="pl1">Phase 1: Simultaneous drop — O(1) per key</span>
+    &nbsp;→&nbsp;
+    <div class="pdot" id="pd2"></div>
+    <span class="plbl" id="pl2">Phase 2: Level-by-level sweep — O(U+n)</span>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats">
+    <div class="scard">
+      <div class="slbl">Active tubes</div>
+      <div class="sval" id="stA" style="color:var(--accent)">0</div>
+      <div class="ssub">out of U=16</div>
+    </div>
+    <div class="scard">
+      <div class="slbl">Total ingestion</div>
+      <div class="sval" id="stI" style="color:var(--purple)">O(n)</div>
+      <div class="ssub"><span id="stN">0</span> × O(1) in parallel</div>
+    </div>
+    <div class="scard">
+      <div class="slbl">Prefix-sum</div>
+      <div class="sval" style="color:var(--accent4)">O(0)</div>
+      <div class="ssub">does not exist here</div>
+    </div>
+    <div class="scard">
+      <div class="slbl">Comparisons</div>
+      <div class="sval" style="color:var(--accent4)">0</div>
+      <div class="ssub">never evaluated</div>
+    </div>
+    <div class="scard">
+      <div class="slbl">Beam level</div>
+      <div class="sval" id="stK" style="color:var(--accent3)">—</div>
+      <div class="ssub">current sweep</div>
+    </div>
+    <div class="scard">
+      <div class="slbl">Emitted</div>
+      <div class="sval" id="stE" style="color:var(--accent2)">0</div>
+      <div class="ssub">by the sweep</div>
+    </div>
+  </div>
+
+  <!-- CANVAS -->
+  <div class="cw"><canvas id="cv"></canvas></div>
+
+  <!-- STATUS -->
+  <div class="status" id="st">
+    Load the example and press <strong>↓ Simultaneous drop</strong>.
+    All numbers will fall at once — each to its own height — with no staircase pattern.
+  </div>
+
+  <!-- OUTPUT -->
+  <div class="out">
+     Order revealed by sweep: <span class="val" id="outV">[ press ↑ Light beam sweep ]</span>
+    <span style="font-size:9px;color:var(--text3);margin-left:8px;">← read from heights, not computed</span>
+  </div>
+
+  <!-- MANUAL SLIDER -->
+  <div class="manual-wrap">
+    <div class="manual-header">
+      <span class="manual-title"> Manual photonic beam control</span>
+      <span class="manual-hint">Drag the slider to explore the sweep level by level — after running Phase 1</span>
+    </div>
+    <div class="slider-row">
+      <span style="font-size:9px;color:#7aa8c8;">level 0</span>
+      <input type="range" id="manualSlider" min="0" max="15" value="0" step="1" oninput="onManualSlider(this.value)">
+      <span style="font-size:9px;color:#7aa8c8;">level 15</span>
+      <div class="slider-val-box" id="sliderVal">0</div>
+    </div>
+    <div class="manual-preview" id="manualPreview">
+      Run <strong>↓ Simultaneous drop</strong> first, then drag the slider to see which resonators the photonic wave activates at each level.
+    </div>
+  </div>
+
+  <!-- LEGEND -->
+  <div class="legend">
+    <div class="leg"><div class="dot" style="background:var(--accent)"></div> active marker (at its height)</div>
+    <div class="leg"><div class="dot" style="background:var(--accent3)"></div> revealed by beam</div>
+    <div class="leg"><div class="dot" style="background:var(--accent2)"></div> light beam (current level)</div>
+    <div class="leg"><div class="dot" style="background:var(--surface3)"></div> empty tube</div>
+    <div class="leg"><div class="dot" style="background:var(--purple)"></div> falling</div>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  const U   = 16;
+  const MAX = U - 1;
+
+  let inputSeq = [];
+  let landed   = [];
+  let revealed = [];
+  let balls    = [];
+  let sweepY   = -1;
+  let phase    = 'idle';
+  let sortedRes = [];
+  let emitCnt  = 0;
+
+  const cv  = document.getElementById('cv');
+  const ctx = cv.getContext('2d');
+  let CW, CH;
+
+  let padL, padR, padT, padB, chartW, chartH;
+  let tubeSpacing, tubeW;
+
+  function layout() {
+    CW = cv.width; CH = cv.height;
+    padL = 42; padR = 14; padT = 22; padB = 28;
+    chartW = CW - padL - padR;
+    chartH = CH - padT - padB;
+    const n = Math.max(inputSeq.length, 1);
+    tubeSpacing = chartW / n;
+    tubeW = Math.max(14, Math.min(44, tubeSpacing * 0.62));
+  }
+
+  function tx(i) { return padL + (i + 0.5) * tubeSpacing; }
+  function floor() { return padT + chartH; }
+  function ceil()  { return padT; }
+
+  function markerY(v) {
+    const margin = chartH * 0.05;
+    return floor() - margin - (v / MAX) * (chartH - margin * 2);
+  }
+
+  function mR() { return Math.max(9, Math.min(18, tubeW * 0.44)); }
+
+  // ── DRAW ──────────────────────────────────────────────────────────
+  function draw() {
+    ctx.clearRect(0, 0, CW, CH);
+    ctx.fillStyle = '#080d16';
+    ctx.fillRect(0, 0, CW, CH);
+
+    const n  = inputSeq.length;
+    const mr = mR();
+
+    // Y-axis labels
+    ctx.font = '8.5px JetBrains Mono, monospace';
+    ctx.textAlign = 'right';
+    for (let v = 0; v <= MAX; v += 2) {
+      const y = markerY(v);
+      ctx.beginPath();
+      ctx.strokeStyle = v % 4 === 0 ? 'rgba(60,90,130,0.35)' : 'rgba(40,65,100,0.2)';
+      ctx.lineWidth = v % 4 === 0 ? 0.8 : 0.4;
+      ctx.setLineDash(v % 4 === 0 ? [3, 6] : [1, 9]);
+      ctx.moveTo(padL, y); ctx.lineTo(CW - padR, y);
+      ctx.stroke(); ctx.setLineDash([]);
+      ctx.fillStyle = '#4a6a8a';
+      ctx.fillText(v, padL - 5, y + 3);
+    }
+
+    // Draw each tube
+    for (let i = 0; i < n; i++) {
+      const val      = inputSeq[i];
+      const cx       = tx(i);
+      const isLanded   = landed[i];
+      const isRevealed = revealed[i];
+
+      // Tube track
+      const tubeGrad = ctx.createLinearGradient(cx - tubeW/2, 0, cx + tubeW/2, 0);
+      if (isRevealed) {
+        tubeGrad.addColorStop(0,   'rgba(16,185,129,0.04)');
+        tubeGrad.addColorStop(0.5, 'rgba(16,185,129,0.10)');
+        tubeGrad.addColorStop(1,   'rgba(16,185,129,0.04)');
+      } else {
+        tubeGrad.addColorStop(0,   '#0e1620');
+        tubeGrad.addColorStop(0.5, '#1a2535');
+        tubeGrad.addColorStop(1,   '#0e1620');
+      }
+      ctx.fillStyle = tubeGrad;
+      ctx.strokeStyle = isRevealed
+        ? 'rgba(16,185,129,0.55)'
+        : isLanded
+          ? 'rgba(245,158,11,0.45)'
+          : 'rgba(80,120,180,0.35)';
+      ctx.lineWidth = 1.4;
+      rr(cx - tubeW/2, ceil(), tubeW, chartH, 6);
+      ctx.fill(); ctx.stroke();
+
+      // Bottom label
+      ctx.fillStyle = isLanded ? (isRevealed ? '#6ee7b7' : '#c0d4e8') : '#4a6a8a';
+      ctx.font = `700 9px JetBrains Mono, monospace`;
+      ctx.textAlign = 'center';
+      ctx.fillText(`t${i+1}`, cx, CH - 6);
+
+      // Keycap marker
+      if (isLanded) {
+        const my = markerY(val);
+        const isCurSweep = sweepY >= 0 && sweepY <= my + mr * 1.4 && sweepY > my - mr * 1.8;
+        const kw = tubeW - 4;
+        const kh = Math.max(18, mr * 1.6);
+        const kx = cx - kw / 2;
+        const ky = my - kh / 2;
+        const kr = 5;
+
+        // Trail
+        const trailG = ctx.createLinearGradient(0, floor(), 0, ky + kh);
+        trailG.addColorStop(0, 'transparent');
+        trailG.addColorStop(1, isRevealed ? 'rgba(16,185,129,0.15)' : 'rgba(245,158,11,0.1)');
+        ctx.fillStyle = trailG;
+        ctx.fillRect(cx - 1.5, ky + kh, 3, floor() - ky - kh);
+
+        // Glow
+        ctx.shadowBlur  = isCurSweep ? 28 : isRevealed ? 14 : 6;
+        ctx.shadowColor = isCurSweep ? 'rgba(16,185,129,1)'
+                        : isRevealed ? 'rgba(16,185,129,0.55)'
+                        :              'rgba(245,158,11,0.4)';
+
+        // Keycap body
+        const bodyColor = isCurSweep ? ['#1ddd9a','#0e9e6e']
+                        : isRevealed  ? ['#2ecc8a','#1a8a5e']
+                        :               ['#f5a623','#c47d0a'];
+        const kg = ctx.createLinearGradient(0, ky, 0, ky + kh);
+        kg.addColorStop(0, bodyColor[0]);
+        kg.addColorStop(1, bodyColor[1]);
+        ctx.fillStyle = kg;
+        rr(kx, ky, kw, kh, kr);
+        ctx.fill();
+        ctx.shadowBlur = 0;
+
+        // Shine
+        const shine = ctx.createLinearGradient(0, ky, 0, ky + kh * 0.4);
+        shine.addColorStop(0, 'rgba(255,255,255,0.22)');
+        shine.addColorStop(1, 'rgba(255,255,255,0)');
+        ctx.fillStyle = shine;
+        rr(kx + 2, ky + 2, kw - 4, kh * 0.45, kr - 1);
+        ctx.fill();
+
+        // Border
+        ctx.strokeStyle = isCurSweep ? 'rgba(16,185,129,0.9)'
+                        : isRevealed  ? 'rgba(16,185,129,0.55)'
+                        :               'rgba(245,158,11,0.6)';
+        ctx.lineWidth = 1.5;
+        rr(kx, ky, kw, kh, kr);
+        ctx.stroke();
+
+        // 3D bottom edge
+        ctx.fillStyle = isCurSweep ? 'rgba(0,80,50,0.5)'
+                      : isRevealed  ? 'rgba(0,60,40,0.4)'
+                      :               'rgba(80,40,0,0.4)';
+        rr(kx, ky + kh - 4, kw, 4, kr);
+        ctx.fill();
+
+        // Value label
+        ctx.fillStyle = '#05080e';
+        ctx.font = `bold ${Math.min(13, kw * 0.5)}px JetBrains Mono, monospace`;
+        ctx.textAlign = 'center';
+        ctx.fillText(val, cx, my + kh * 0.18);
+
+        // O(1) badge
+        if (isCurSweep) {
+          const badgeW = 46; const badgeH = 18;
+          ctx.fillStyle = 'rgba(16,185,129,0.25)';
+          ctx.strokeStyle = 'rgba(16,185,129,0.7)';
+          ctx.lineWidth = 1;
+          rr(cx - badgeW/2, ky - badgeH - 5, badgeW, badgeH, 5);
+          ctx.fill(); ctx.stroke();
+          ctx.fillStyle = '#ffffff';
+          ctx.font = 'bold 10px JetBrains Mono, monospace';
+          ctx.fillText('O(1)', cx, ky - 9);
+        }
+      }
+    }
+
+    // SWEEP LINE
+    if (sweepY >= 0) {
+      const g = ctx.createLinearGradient(0, sweepY - 20, 0, sweepY + 5);
+      g.addColorStop(0, 'rgba(16,185,129,0)');
+      g.addColorStop(0.65, 'rgba(16,185,129,0.2)');
+      g.addColorStop(1, 'rgba(16,185,129,0)');
+      ctx.fillStyle = g;
+      ctx.fillRect(padL, sweepY - 20, chartW, 25);
+      ctx.strokeStyle = 'rgba(16,185,129,0.88)';
+      ctx.lineWidth = 1.8;
+      ctx.shadowBlur = 14;
+      ctx.shadowColor = 'rgba(16,185,129,0.6)';
+      ctx.beginPath();
+      ctx.moveTo(padL, sweepY); ctx.lineTo(CW - padR, sweepY);
+      ctx.stroke(); ctx.shadowBlur = 0;
+
+      // Level label
+      const curLevel = Math.round(MAX * (floor() - sweepY) / (chartH * 0.9));
+      if (curLevel >= 0 && curLevel <= MAX) {
+        ctx.fillStyle = 'rgba(16,185,129,0.7)';
+        ctx.font = 'bold 8px JetBrains Mono, monospace';
+        ctx.textAlign = 'left';
+        ctx.fillText(`↑ level ${curLevel}`, 2, sweepY - 5);
+      }
+
+      // PHOTONIC POPUP
+      const popupLines = [
+        '⚡ Photonic wave propagating',
+        'Active resonators at this level',
+        'couple energy and emit by resonance.',
+        'No comparator. No control signal.',
+        'Speed = speed of light.'
+      ];
+      const popW = 218;
+      const popH = popupLines.length * 14 + 14;
+      const popX = Math.min(CW - padR - popW - 6, padL + 8);
+      const popY = Math.max(4, sweepY - popH - 14);
+
+      ctx.fillStyle = 'rgba(6,20,14,0.92)';
+      ctx.strokeStyle = 'rgba(16,185,129,0.5)';
+      ctx.lineWidth = 1;
+      rr(popX, popY, popW, popH, 7);
+      ctx.fill(); ctx.stroke();
+
+      ctx.fillStyle = '#10b981';
+      rr(popX, popY + 6, 3, popH - 12, 2);
+      ctx.fill();
+
+      popupLines.forEach((line, i) => {
+        ctx.fillStyle = i === 0 ? '#6ee7b7' : '#8fc8a8';
+        ctx.font = i === 0
+          ? 'bold 9px JetBrains Mono, monospace'
+          : '8.5px JetBrains Mono, monospace';
+        ctx.textAlign = 'left';
+        ctx.fillText(line, popX + 12, popY + 12 + i * 14);
+      });
+
+      const arrowX = popX + popW * 0.35;
+      ctx.fillStyle = 'rgba(16,185,129,0.5)';
+      ctx.beginPath();
+      ctx.moveTo(arrowX - 5, popY + popH);
+      ctx.lineTo(arrowX + 5, popY + popH);
+      ctx.lineTo(arrowX, popY + popH + 8);
+      ctx.closePath();
+      ctx.fill();
+    }
+
+    // FALLING KEYCAPS
+    balls.forEach(b => {
+      const kw = tubeW - 4;
+      const kh = Math.max(18, mR() * 1.6);
+      const kx = b.x - kw / 2;
+      const ky = b.y - kh / 2;
+      const kr = 5;
+
+      ctx.shadowBlur = 22;
+      ctx.shadowColor = 'rgba(167,139,250,0.9)';
+
+      const kg = ctx.createLinearGradient(0, ky, 0, ky + kh);
+      kg.addColorStop(0, '#c4b5fd');
+      kg.addColorStop(1, '#7c3aed');
+      ctx.fillStyle = kg;
+      rr(kx, ky, kw, kh, kr);
+      ctx.fill();
+      ctx.shadowBlur = 0;
+
+      const shine = ctx.createLinearGradient(0, ky, 0, ky + kh * 0.45);
+      shine.addColorStop(0, 'rgba(255,255,255,0.25)');
+      shine.addColorStop(1, 'rgba(255,255,255,0)');
+      ctx.fillStyle = shine;
+      rr(kx + 2, ky + 2, kw - 4, kh * 0.45, kr - 1);
+      ctx.fill();
+
+      ctx.strokeStyle = 'rgba(167,139,250,0.8)';
+      ctx.lineWidth = 1.5;
+      rr(kx, ky, kw, kh, kr);
+      ctx.stroke();
+
+      ctx.fillStyle = 'rgba(60,20,120,0.5)';
+      rr(kx, ky + kh - 4, kw, 4, kr);
+      ctx.fill();
+
+      ctx.fillStyle = '#ffffff';
+      ctx.font = `bold ${Math.min(13, kw * 0.5)}px JetBrains Mono, monospace`;
+      ctx.textAlign = 'center';
+      ctx.fillText(b.val, b.x, b.y + kh * 0.18);
+    });
+  }
+
+  function rr(x,y,w,h,r) {
+    if(w<2*r)r=w/2; if(h<2*r)r=h/2;
+    ctx.beginPath();
+    ctx.moveTo(x+r,y); ctx.lineTo(x+w-r,y);
+    ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+    ctx.lineTo(x+w,y+h-r); ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+    ctx.lineTo(x+r,y+h); ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+    ctx.lineTo(x,y+r); ctx.quadraticCurveTo(x,y,x+r,y);
+    ctx.closePath();
+  }
+
+  function sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
+
+  // ── FALL ──────────────────────────────────────────────────────────
+  async function runFall() {
+    if (phase !== 'idle' || inputSeq.length === 0) return;
+    phase = 'fall'; setPhaseUI('fall'); lock();
+
+    landed   = new Array(inputSeq.length).fill(false);
+    revealed = new Array(inputSeq.length).fill(false);
+    sweepY   = -1;
+    sortedRes = []; emitCnt = 0;
+    document.getElementById('outV').textContent = '[ press ↑ Light beam sweep ]';
+    document.getElementById('stE').textContent = '0';
+    document.getElementById('stK').textContent = '—';
+    document.getElementById('stA').textContent = '0';
+
+    layout(); draw();
+
+    balls = inputSeq.map((val, i) => ({
+      val, tubeIdx: i,
+      x: tx(i),
+      y: ceil() - mR() - 4,
+      targetY: markerY(val),
+    }));
+
+    setSt(
+      `<span class="hl-p">↓ All keys drop simultaneously.</span> ` +
+      `Each one goes straight to its tube and stops at the height of its value. ` +
+      `Tube 1 holds ${inputSeq[0]}, dropping to height ${inputSeq[0]}. ` +
+      `No comparison with any neighbor. Cost per key: <span class="hl-g">O(1)</span>.`
+    );
+
+    const T = 750;
+    const t0 = performance.now();
+
+    await new Promise(res => {
+      (function tick(now) {
+        const t = Math.min(1, (now - t0) / T);
+        const e = 1 - Math.pow(1 - t, 2.6);
+        balls.forEach(b => {
+          b.y = (ceil() - mR() - 4) + (b.targetY - (ceil() - mR() - 4)) * e;
+        });
+        draw();
+        if (t >= 1) {
+          landed = new Array(inputSeq.length).fill(true);
+          balls = [];
+          draw();
+          res();
+        } else {
+          requestAnimationFrame(tick);
+        }
+      })(performance.now());
+    });
+
+    document.getElementById('stA').textContent = inputSeq.length;
+    setSt(
+      `<span class="hl-g">✓ Landing complete.</span> ` +
+      `Notice there is no staircase: tubes are in arrival order (${inputSeq.join(', ')}), ` +
+      `but each marker sits at its own value height. The 1 is near the floor, the 14 near the top — ` +
+      `yet their tubes are in arbitrary horizontal positions. ` +
+      `Now press <strong>↑ Light beam sweep</strong>.`
+    );
+
+    phase = 'idle'; setPhaseUI('idle'); unlock();
+  }
+
+  // ── SWEEP ─────────────────────────────────────────────────────────
+  async function runSweep() {
+    if (phase !== 'idle') return;
+    if (landed.every(v => !v)) {
+      setSt('Run <strong>↓ Simultaneous drop</strong> first.');
+      return;
+    }
+    phase = 'sweep'; setPhaseUI('sweep'); lock();
+    sortedRes = []; emitCnt = 0;
+    revealed = new Array(inputSeq.length).fill(false);
+    document.getElementById('outV').textContent = '[ sweeping... ]';
+
+    const startY = floor() + 12;
+    const endY   = ceil()  - 12;
+    const steps  = 100;
+    const stepMs = 25;
+
+    for (let s = 0; s <= steps; s++) {
+      sweepY = startY - (startY - endY) * (s / steps);
+
+      let hitAny = false;
+      for (let i = 0; i < inputSeq.length; i++) {
+        if (revealed[i]) continue;
+        const my = markerY(inputSeq[i]);
+        const mr = mR();
+        if (sweepY <= my + mr) {
+          revealed[i] = true;
+          sortedRes.push(inputSeq[i]);
+          emitCnt++;
+          hitAny = true;
+        }
+      }
+
+      if (hitAny) {
+        const display = [...sortedRes].sort((a,b)=>a-b);
+        document.getElementById('stE').textContent = emitCnt;
+        document.getElementById('outV').textContent = '[ ' + display.join(' → ') + ' ]';
+        const curLv = Math.round(MAX*(floor()-sweepY)/(chartH*0.9));
+        document.getElementById('stK').textContent = `level ${Math.max(0,Math.min(MAX,curLv))}`;
+        setSt(
+          `<span class="hl-b">Beam at level ~${Math.max(0,Math.min(MAX,curLv))}:</span> ` +
+          `reached active marker → emits <span class="hl-a">${sortedRes[sortedRes.length-1]}</span>. ` +
+          `Cost: <span class="hl-g">O(1)</span> per tube. No inter-tube comparison.`
+        );
+      }
+
+      draw();
+      await sleep(stepMs);
+    }
+
+    sweepY = -1;
+    draw();
+    const display = [...sortedRes].sort((a,b)=>a-b);
+    document.getElementById('outV').textContent = '[ ' + display.join(' → ') + ' ]';
+    document.getElementById('stK').textContent = '✓';
+    setSt(
+      `<span class="hl-g">✓ Sweep complete.</span> ` +
+      `${steps} levels traversed (O(U)) · ${emitCnt} elements emitted (O(n)). ` +
+      `Total: <span class="hl-a">O(U + n)</span>. ` +
+      `Prefix-sum: <span class="hl-r">0</span>. ` +
+      `Key comparisons: <span class="hl-r">0</span>. ` +
+      `Order was <em>read</em> from heights — not computed.`
+    );
+
+    phase = 'idle'; setPhaseUI('idle'); unlock();
+  }
+
+  async function runBoth() {
+    if (phase !== 'idle') return;
+    await runFall();
+    await sleep(800);
+    await runSweep();
+  }
+
+  // ── UI HELPERS ────────────────────────────────────────────────────
+  function setSt(html) { document.getElementById('st').innerHTML = html; }
+
+  function setPhaseUI(p) {
+    document.getElementById('pd1').className = 'pdot'+(p==='fall' ?' p-fall' :'');
+    document.getElementById('pd2').className = 'pdot'+(p==='sweep'?' p-sweep':'');
+    document.getElementById('pl0').className = 'plbl'+(p==='idle' ?' active' :'');
+    document.getElementById('pl1').className = 'plbl'+(p==='fall' ?' active' :'');
+    document.getElementById('pl2').className = 'plbl'+(p==='sweep'?' active' :'');
+  }
+
+  function lock()   { ['btnFall','btnSweep','btnBoth'].forEach(id=>document.getElementById(id).disabled=true); }
+  function unlock() { ['btnFall','btnSweep','btnBoth'].forEach(id=>document.getElementById(id).disabled=false); }
+
+  function updSeq() {
+    const d = document.getElementById('seqArea');
+    d.innerHTML = '';
+    if (!inputSeq.length) {
+      d.innerHTML = '<span style="color:var(--text3);font-size:10px;">Add numbers (0–15)</span>';
+      document.getElementById('stN').textContent = '0';
+      document.getElementById('stA').textContent = '0';
+      return;
+    }
+    inputSeq.forEach((v,i)=>{
+      const b = document.createElement('div');
+      b.className='badge'; b.textContent=v;
+      b.title=`Arrival ${i+1}: value ${v} → tube ${i+1} → height ${v}`;
+      d.appendChild(b);
+    });
+    const info = document.createElement('span');
+    info.className='seq-info';
+    info.textContent=`→ ${inputSeq.length} unsorted elements · each in its arrival tube`;
+    d.appendChild(info);
+    document.getElementById('stN').textContent = inputSeq.length;
+    document.getElementById('stA').textContent = '0';
+    layout(); draw();
+  }
+
+  function addEl() {
+    if (phase !== 'idle') return;
+    if (inputSeq.length >= 16) return;
+    let v = parseInt(document.getElementById('val').value);
+    if (isNaN(v)||v<0) v=0; if(v>MAX) v=MAX;
+    if (inputSeq.includes(v)) {
+      setSt(`Value <strong>${v}</strong> is already in the sequence. In the sovereign model, each value is unique.`);
+      return;
+    }
+    inputSeq.push(v);
+    landed=[]; revealed=[]; balls=[]; sweepY=-1; sortedRes=[]; emitCnt=0;
+    document.getElementById('outV').textContent='[ press ↑ Light beam sweep ]';
+    document.getElementById('stE').textContent='0';
+    document.getElementById('stK').textContent='—';
+    updSeq();
+  }
+
+  function resetAll() {
+    if (phase !== 'idle') return;
+    inputSeq=[]; landed=[]; revealed=[]; balls=[]; sweepY=-1; sortedRes=[]; emitCnt=0;
+    document.getElementById('outV').textContent='[ press ↑ Light beam sweep ]';
+    document.getElementById('stE').textContent='0';
+    document.getElementById('stK').textContent='—';
+    updSeq(); setPhaseUI('idle');
+    setSt('Add numbers and press <strong>↓ Simultaneous drop</strong>.');
+    layout(); draw();
+  }
+
+  function loadEx() {
+    if (phase !== 'idle') return;
+    inputSeq=[9,3,12,1,7,4,14,2];
+    landed=[]; revealed=[]; balls=[]; sweepY=-1; sortedRes=[]; emitCnt=0;
+    document.getElementById('outV').textContent='[ press ↑ Light beam sweep ]';
+    document.getElementById('stE').textContent='0';
+    document.getElementById('stK').textContent='—';
+    updSeq();
+    setSt('Unsorted input loaded: [9, 3, 12, 1, 7, 4, 14, 2]. Tubes are in arrival order. Press <strong>↓ Simultaneous drop</strong> — notice there is no staircase pattern.');
+  }
+
+  function randVec() {
+    if (phase !== 'idle') return;
+    const len = Math.floor(Math.random()*5)+7;
+    const pool = Array.from({length:U},(_,i)=>i);
+    for(let i=pool.length-1;i>0;i--){
+      const j=Math.floor(Math.random()*(i+1));
+      [pool[i],pool[j]]=[pool[j],pool[i]];
+    }
+    const base = pool.slice(0, len);
+    const dupCount = Math.floor(Math.random()*2)+2;
+    for(let d=0; d<dupCount; d++){
+      const srcIdx = Math.floor(Math.random()*base.length);
+      const dstIdx = Math.floor(Math.random()*base.length);
+      if(srcIdx !== dstIdx) base[dstIdx] = base[srcIdx];
+    }
+    inputSeq = base;
+    landed=[]; revealed=[]; balls=[]; sweepY=-1; sortedRes=[]; emitCnt=0;
+    document.getElementById('outV').textContent='[ press ↑ Light beam sweep ]';
+    document.getElementById('stE').textContent='0';
+    document.getElementById('stK').textContent='—';
+    updSeq();
+    const dups = inputSeq.length - new Set(inputSeq).size;
+    setSt(`Random vector loaded with <strong>${dups} duplicate(s)</strong> — observe how the sweep handles them by height accumulation. Press <strong>↓ Simultaneous drop</strong>.`);
+  }
+
+  function onManualSlider(val) {
+    if (phase !== 'idle') return;
+    if (landed.every(v => !v)) {
+      document.getElementById('manualPreview').innerHTML =
+        'Run <strong>↓ Simultaneous drop</strong> first to activate the tubes.';
+      return;
+    }
+    const level = parseInt(val);
+    document.getElementById('sliderVal').textContent = level;
+
+    const hits = [];
+    for (let i = 0; i < inputSeq.length; i++) {
+      if (landed[i] && inputSeq[i] === level) hits.push(inputSeq[i]);
+    }
+
+    let html = `<strong style="color:var(--accent3)">Level ${level}</strong> — `;
+    if (hits.length > 0) {
+      html += `<strong style="color:var(--accent)">active resonator</strong>: ` +
+        `the tube with value ${level} couples energy and emits. ` +
+        `<span class="hl-g">O(1)</span> — the physical state of the resonator is the answer. ` +
+        `No comparator. No control signal.`;
+    } else {
+      html += `<span style="color:#7aa8c8">no active resonator at this level. ` +
+        `The wave passes and all tubes remain transparent. O(1) — absence is also information.</span>`;
+    }
+    document.getElementById('manualPreview').innerHTML = html;
+
+    const margin2 = chartH * 0.05;
+    sweepY = floor() - margin2 - (level / MAX) * (chartH - margin2 * 2);
+    draw();
+  }
+
+  function setCanvasSize() {
+    const pw = cv.parentElement.clientWidth;
+    const w  = Math.min(1040, pw);
+    const h  = Math.max(260, Math.min(400, w*0.34));
+    cv.width=w; cv.height=h;
+    layout(); draw();
+  }
+
+  window.addEl=addEl; window.resetAll=resetAll;
+  window.loadEx=loadEx; window.randVec=randVec;
+  window.runFall=runFall; window.runSweep=runSweep; window.runBoth=runBoth;
+  window.onManualSlider=onManualSlider;
+  window.addEventListener('resize', setCanvasSize);
+
+  setCanvasSize();
+  loadEx();
+})();
+</script>
+</body>
+</html>

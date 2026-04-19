@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="CMakePresetLoader">{
+  &quot;useNewFormat&quot;: true
+}</component>
+  <component name="CMakeReloadState">
+    <option name="reloaded" value="true" />
+  </component>
+  <component name="CMakeRunConfigurationManager">
+    <generated>
+      <config projectName="dsortcpp" targetName="bench_ips4o" />
+      <config projectName="dsortcpp" targetName="dsortcpp" />
+      <config projectName="dsortcpp" targetName="bench_counting" />
+    </generated>
+  </component>
+  <component name="CMakeSettings">
+    <configurations>
+      <configuration PROFILE_NAME="Debug" ENABLED="true" CONFIG_NAME="Debug" />
+    </configurations>
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="48aeea36-72bd-47d4-b473-44aa5f0b739c" name="Changes" comment="feat(simulators): add full interactive DialSort visualization suite (sovereign, luminico, cerebras, CRN)&#10;&#10;- Added Sovereign Dial model (value-as-position geometric interpretation)&#10;- Added Luminico rail model (frequency as light intensity)&#10;- Added Cerebras-style spatial simulator (parallel tile execution)&#10;- Added CRN simulator (conflict resolution network with additive reduction tree)&#10;&#10;- Unified visual design across simulators&#10;- Prepared structure for GitHub Pages deployment&#10;- Aligned simulator naming with paper references" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ClangdSettings">
+    <option name="formatViaClangd" value="false" />
+  </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug" />
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectApplicationVersion">
+    <option name="ide" value="CLion" />
+    <option name="majorVersion" value="2023" />
+    <option name="minorVersion" value="3.4" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 4
+}</component>
+  <component name="ProjectId" id="3BH2GNbrjNRRvcqO6qFd5Eeavpo" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_ADD_EXTERNAL_FILES": "true",
+    "CMake Application.bench_counting.executor": "Run",
+    "CMake Application.bench_vs.executor": "Run",
+    "CMake Application.dsortcpp.executor": "Run",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.cidr.known.project.marker": "true",
+    "RunOnceActivity.readMode.enableVisualFormatting": "true",
+    "cf.first.check.clang-format": "false",
+    "cidr.known.project.marker": "true",
+    "git-widget-placeholder": "main",
+    "last_opened_file_path": "C:/EAFIT 2026/DIALSORT/dsortcpp",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\EAFIT 2026\DIALSORT\dsortcpp" />
+      <recent name="C:\EAFIT 2026\DIALSORT\dsortcpp\simulators\chip-visualizer" />
+      <recent name="C:\EAFIT 2026\DIALSORT\dsortcpp\simulators\luminous-rail" />
+      <recent name="C:\EAFIT 2026\DIALSORT\dsortcpp\simulators\sovereign-dial" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\EAFIT 2026\DIALSORT\dsortcpp\simulators\crn" />
+      <recent name="C:\EAFIT 2026\DIALSORT\dsortcpp\results" />
+    </key>
+  </component>
+  <component name="RunManager" selected="CMake Application.bench_counting">
+    <configuration name="bench_counting" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="dsortcpp" TARGET_NAME="bench_counting" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="dsortcpp" RUN_TARGET_NAME="bench_counting">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="bench_ips4o" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="dsortcpp" TARGET_NAME="bench_ips4o" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="dsortcpp" RUN_TARGET_NAME="bench_ips4o">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="dsortcpp" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="dsortcpp" TARGET_NAME="dsortcpp" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="dsortcpp" RUN_TARGET_NAME="dsortcpp">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <list>
+      <item itemvalue="CMake Application.bench_counting" />
+      <item itemvalue="CMake Application.bench_ips4o" />
+      <item itemvalue="CMake Application.dsortcpp" />
+    </list>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="48aeea36-72bd-47d4-b473-44aa5f0b739c" name="Changes" comment="" />
+      <created>1774131578701</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1774131578701</updated>
+      <workItem from="1774131581129" duration="4912000" />
+      <workItem from="1774268946992" duration="1849000" />
+      <workItem from="1774305543057" duration="1439000" />
+      <workItem from="1774488606688" duration="4623000" />
+      <workItem from="1776566979320" duration="2649000" />
+      <workItem from="1776605381737" duration="6208000" />
+    </task>
+    <task id="LOCAL-00001" summary="git commit -m &quot;Initial research release: DialSort (paper, implementation, dataset, and documentation)&#10;&#10;- Added full paper: 'DialSort: Non-Comparative Integer Sorting via the Self-Indexing Principle'&#10;- Implemented DialSort variants (Counting, Parallel, Radix)&#10;- Included complete benchmark dataset (CSV, 208 configurations)&#10;- Added detailed README with conceptual model and CRN architecture&#10;- Provided reproducibility details (compiler, flags, seed, methodology)&#10;- Integrated experimental results reported in the paper&#10;&#10;This release accompanies the arXiv submission and provides full reproducibility of all reported results.&quot;">
+      <option name="closed" value="true" />
+      <created>1774153114523</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1774153114523</updated>
+    </task>
+    <task id="LOCAL-00002" summary="&quot;version 2 include DialSort vs countingSort and results reports&quot;">
+      <option name="closed" value="true" />
+      <created>1774314398469</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1774314398469</updated>
+    </task>
+    <task id="LOCAL-00003" summary="&quot;DialSort vs countingSort results reports&quot;">
+      <option name="closed" value="true" />
+      <created>1774314457582</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1774314457582</updated>
+    </task>
+    <task id="LOCAL-00004" summary="feat: add DialSort vs IPS4o parallel benchmark, full results, source code, and Cerebras WSE-3 analytical projection">
+      <option name="closed" value="true" />
+      <created>1776605434948</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1776605434948</updated>
+    </task>
+    <task id="LOCAL-00005" summary="feat(simulators): add full interactive DialSort visualization suite (sovereign, luminico, cerebras, CRN)&#10;&#10;- Added Sovereign Dial model (value-as-position geometric interpretation)&#10;- Added Luminico rail model (frequency as light intensity)&#10;- Added Cerebras-style spatial simulator (parallel tile execution)&#10;- Added CRN simulator (conflict resolution network with additive reduction tree)&#10;&#10;- Unified visual design across simulators&#10;- Prepared structure for GitHub Pages deployment&#10;- Aligned simulator naming with paper references">
+      <option name="closed" value="true" />
+      <created>1776611377313</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1776611377314</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="VCPKGProject">
+    <isAutomaticCheckingOnLaunch value="false" />
+    <isAutomaticFoundErrors value="true" />
+    <isAutomaticReloadCMake value="true" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
+    <MESSAGE value="git commit -m &quot;Initial research release: DialSort (paper, implementation, dataset, and documentation)&#10;&#10;- Added full paper: 'DialSort: Non-Comparative Integer Sorting via the Self-Indexing Principle'&#10;- Implemented DialSort variants (Counting, Parallel, Radix)&#10;- Included complete benchmark dataset (CSV, 208 configurations)&#10;- Added detailed README with conceptual model and CRN architecture&#10;- Provided reproducibility details (compiler, flags, seed, methodology)&#10;- Integrated experimental results reported in the paper&#10;&#10;This release accompanies the arXiv submission and provides full reproducibility of all reported results.&quot;" />
+    <MESSAGE value="&quot;version 2 include DialSort vs countingSort and results reports&quot;" />
+    <MESSAGE value="&quot;DialSort vs countingSort results reports&quot;" />
+    <MESSAGE value="feat: add DialSort vs IPS4o parallel benchmark, full results, source code, and Cerebras WSE-3 analytical projection" />
+    <MESSAGE value="feat(simulators): add full interactive DialSort visualization suite (sovereign, luminico, cerebras, CRN)&#10;&#10;- Added Sovereign Dial model (value-as-position geometric interpretation)&#10;- Added Luminico rail model (frequency as light intensity)&#10;- Added Cerebras-style spatial simulator (parallel tile execution)&#10;- Added CRN simulator (conflict resolution network with additive reduction tree)&#10;&#10;- Unified visual design across simulators&#10;- Prepared structure for GitHub Pages deployment&#10;- Aligned simulator naming with paper references" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat(simulators): add full interactive DialSort visualization suite (sovereign, luminico, cerebras, CRN)&#10;&#10;- Added Sovereign Dial model (value-as-position geometric interpretation)&#10;- Added Luminico rail model (frequency as light intensity)&#10;- Added Cerebras-style spatial simulator (parallel tile execution)&#10;- Added CRN simulator (conflict resolution network with additive reduction tree)&#10;&#10;- Unified visual design across simulators&#10;- Prepared structure for GitHub Pages deployment&#10;- Aligned simulator naming with paper references" />
+  </component>
+</project>

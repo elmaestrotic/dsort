@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>DialSort Luminico · Fully Illuminated Rail</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: #0b0f16;
+      font-family: 'Segoe UI', 'Fira Code', 'Courier New', monospace;
+      padding: 20px;
+    }
+
+    .wrap {
+      max-width: 1100px;
+      margin: 0 auto;
+      background: #0f131c;
+      border-radius: 28px;
+      padding: 20px 24px 24px;
+      box-shadow: 0 12px 28px rgba(0,0,0,0.5);
+      border: 1px solid #2a3a55;
+    }
+
+    .title {
+      font-size: 1.4rem;
+      font-weight: 600;
+      color: #c0e0ff;
+      letter-spacing: -0.3px;
+      margin-bottom: 4px;
+    }
+
+    .sub {
+      font-size: 0.8rem;
+      color: #8aa0c0;
+      margin-bottom: 20px;
+      border-left: 3px solid #3a7bc0;
+      padding-left: 12px;
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 24px;
+      background: #0a0e14;
+      padding: 12px 16px;
+      border-radius: 60px;
+    }
+
+    .controls input {
+      background: #1e2533;
+      border: 1px solid #2f3b4f;
+      color: #e0f0ff;
+      padding: 6px 12px;
+      border-radius: 40px;
+      width: 80px;
+      font-family: monospace;
+      font-weight: bold;
+      text-align: center;
+    }
+
+    button {
+      background: #1e2a3a;
+      border: none;
+      color: #bbd9ff;
+      padding: 6px 16px;
+      border-radius: 40px;
+      font-family: monospace;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.3);
+    }
+
+    button:hover {
+      background: #2a3c54;
+      color: white;
+      transform: scale(0.98);
+    }
+
+    .stats {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 16px;
+      background: #0a0e14;
+      padding: 8px 20px;
+      border-radius: 48px;
+      font-size: 0.8rem;
+      color: #9ab3d0;
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      background: #070a10;
+      border-radius: 20px;
+      margin: 16px 0 8px;
+      border: 1px solid #2a3a50;
+      box-shadow: 0 6px 12px rgba(0,0,0,0.4);
+    }
+
+    .sorted-output {
+      margin-top: 16px;
+      background: #0a0e14;
+      padding: 14px 18px;
+      border-radius: 24px;
+      font-size: 0.9rem;
+      color: #bfd6ff;
+      text-align: center;
+      border-left: 4px solid #f0b34b;
+    }
+
+    .sorted-output span {
+      color: #ffdd99;
+      font-weight: bold;
+      font-size: 1.1rem;
+      letter-spacing: 2px;
+      background: #1a1f2c;
+      padding: 4px 12px;
+      border-radius: 32px;
+      display: inline-block;
+      font-family: monospace;
+    }
+
+    .manual-area {
+      margin-top: 20px;
+      background: #0a0e14;
+      border-radius: 24px;
+      padding: 12px 18px;
+    }
+
+    .slider-container {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+
+    .slider-container label {
+      color: #c0e0ff;
+      font-size: 0.8rem;
+    }
+
+    input[type="range"] {
+      flex: 1;
+      min-width: 150px;
+      background: #1e2533;
+      height: 4px;
+      border-radius: 4px;
+      -webkit-appearance: none;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #3d9eff;
+      cursor: pointer;
+      box-shadow: 0 0 6px #3d9eff;
+    }
+
+    #manualLevelValue {
+      background: #1f2b3c;
+      padding: 2px 10px;
+      border-radius: 30px;
+      font-weight: bold;
+      color: #ffdd99;
+    }
+
+    .manual-preview {
+      font-size: 0.85rem;
+      color: #bfd6ff;
+      text-align: center;
+      padding: 8px;
+      background: #0a0e14;
+      border-radius: 20px;
+      margin-top: 6px;
+    }
+
+    .manual-preview span {
+      color: #ffdd99;
+      font-weight: bold;
+    }
+
+    .legend {
+      display: flex;
+      gap: 24px;
+      margin: 20px 0 0;
+      font-size: 11px;
+      color: #9ab3d0;
+      background: #0a0e14;
+      padding: 8px 16px;
+      border-radius: 40px;
+      width: fit-content;
+    }
+
+    .leg {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 3px;
+    }
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <div class="title">✨ DialSort Luminico — Fully Illuminated Rail ✨</div>
+  <div class="sub">Each rail (dial) lights up from the ground to the height of its value. Light intensity is proportional to frequency (number of repetitions).</div>
+
+  <div class="controls">
+    <input type="number" id="val" min="0" max="9" value="7">
+    <button onclick="addValue()">➕ Add</button>
+    <button onclick="randomVector()">🎲 Random vector (with duplicates)</button>
+    <button onclick="runScan()" id="scanBtn">🔍 Automatic scan (bottom-up)</button>
+    <button onclick="resetAll()">🗑️ Clear all</button>
+    <button onclick="loadExample()">📋 Example: 3,7,1,7,4,7,2</button>
+  </div>
+
+  <div class="stats" id="statsPanel">
+    📊 Total elements: <span id="totalCount">0</span> &nbsp;|&nbsp; 💡 Rail intensity = frequency
+  </div>
+
+  <canvas id="dialCanvas" width="900" height="340" style="width:100%; height:auto; max-width:1000px; aspect-ratio:900/340"></canvas>
+
+  <div class="sorted-output">
+    📋 Sorted vector (bottom-up): <span id="sortedValue">[ ]</span>
+  </div>
+
+  <div class="manual-area">
+    <div class="slider-container">
+      <label>🔦 Manual pulse (drag):</label>
+      <input type="range" id="manualLevel" min="0" max="9" value="0" step="1">
+      <span id="manualLevelValue">0</span>
+    </div>
+    <div class="manual-preview" id="manualPreview">
+      🖱️ Move the pulse — the accumulated numbers up to that level will be shown
+    </div>
+  </div>
+
+  <div class="legend">
+    <div class="leg"><div class="dot" style="background:#EF9F27; opacity:0.3; height:8px; width:20px; border-radius:4px"></div> low brightness (frequency 1)</div>
+    <div class="leg"><div class="dot" style="background:#EF9F27; opacity:0.7; height:8px; width:20px; border-radius:4px"></div> medium brightness (frequency 3–4)</div>
+    <div class="leg"><div class="dot" style="background:#EF9F27; opacity:1; height:8px; width:20px; border-radius:4px; box-shadow:0 0 6px #EF9F27"></div> high brightness (frequency ≥5)</div>
+    <div class="leg"><div class="dot" style="background:#3d9eff; height:8px; width:20px; border-radius:4px"></div> active pulse level</div>
+  </div>
+</div>
+
+<script>
+  (function() {
+    const MIN_VAL = 0;
+    const MAX_VAL = 9;
+    const RANGE = MAX_VAL - MIN_VAL + 1; // 10
+
+    // Frequency counters
+    let frequencies = new Array(RANGE).fill(0);
+    let totalElements = 0;
+    let scanning = false;
+
+    const canvas = document.getElementById('dialCanvas');
+    const ctx = canvas.getContext('2d');
+    let canvasWidth = 900, canvasHeight = 340;
+
+    // UI elements
+    const manualSlider = document.getElementById('manualLevel');
+    const manualValueSpan = document.getElementById('manualLevelValue');
+    const manualPreviewDiv = document.getElementById('manualPreview');
+    const sortedValueSpan = document.getElementById('sortedValue');
+    const totalCountSpan = document.getElementById('totalCount');
+
+    function setCanvasSize() {
+      const container = canvas.parentElement;
+      const wantedWidth = Math.min(1000, container.clientWidth - 32);
+      canvas.width = wantedWidth;
+      canvas.height = 340;
+      canvas.style.width = `${wantedWidth}px`;
+      canvas.style.height = '340px';
+      canvasWidth = wantedWidth;
+      canvasHeight = 340;
+      draw(getCurrentManualLevel());
+    }
+
+    const colors = {
+      bgCanvas: '#070a10',
+      trackBarEmpty: '#1f2a36',    // riel sin iluminar
+      trackBorder: '#2f4058',
+      litColor: '#EF9F27',          // color del brillo
+      scanOverlay: '#3d9eff',
+      scanGlow: '#3d9eff30',
+      textMain: '#d0e4ff',
+      textMuted: '#8aa0c0',
+      floorLine: '#3e5570',
+      gridLine: '#1f2d40',
+    };
+
+    // Intensity (opacity) by frequency: more frequency = more brightness
+    function getIntensity(freq) {
+      if (freq === 0) return 0.08;   // almost off
+      return Math.min(0.95, 0.2 + freq * 0.18);
+    }
+
+    function draw(scanLevel = -1) {
+      if (!ctx) return;
+      const W = canvasWidth;
+      const H = canvasHeight;
+      ctx.clearRect(0, 0, W, H);
+      ctx.fillStyle = colors.bgCanvas;
+      ctx.fillRect(0, 0, W, H);
+      
+      const padL = 44, padR = 16, padT = 28, padB = 38;
+      const chartW = W - padL - padR;
+      const chartH = H - padT - padB;
+      const levelHeight = chartH / (MAX_VAL + 1);
+      
+      // Horizontal scale lines
+      ctx.font = "10px 'Segoe UI', monospace";
+      ctx.fillStyle = colors.textMuted;
+      ctx.textAlign = 'right';
+      for (let k = 0; k <= MAX_VAL; k++) {
+        const y = padT + chartH - (k + 0.5) * levelHeight;
+        ctx.fillText(k, padL - 6, y + 4);
+        ctx.beginPath();
+        ctx.strokeStyle = colors.gridLine;
+        ctx.lineWidth = 0.6;
+        ctx.setLineDash([2, 4]);
+        ctx.moveTo(padL, y);
+        ctx.lineTo(W - padR, y);
+        ctx.stroke();
+      }
+      ctx.setLineDash([]);
+      
+      // Floor
+      ctx.beginPath();
+      ctx.strokeStyle = colors.floorLine;
+      ctx.lineWidth = 1.5;
+      ctx.moveTo(padL, padT + chartH);
+      ctx.lineTo(W - padR, padT + chartH);
+      ctx.stroke();
+      
+      // Manual pulse band when active
+      if (scanLevel >= 0 && scanLevel <= MAX_VAL) {
+        const sy = padT + chartH - (scanLevel + 0.5) * levelHeight;
+        ctx.fillStyle = colors.scanGlow;
+        ctx.fillRect(padL, sy - levelHeight/2, chartW, levelHeight);
+        ctx.strokeStyle = colors.scanOverlay;
+        ctx.lineWidth = 1.8;
+        ctx.beginPath();
+        ctx.moveTo(padL, sy);
+        ctx.lineTo(W - padR, sy);
+        ctx.stroke();
+        ctx.fillStyle = colors.scanOverlay;
+        ctx.textAlign = 'left';
+        ctx.font = "bold 10px monospace";
+        ctx.fillText(`▼ pulse at k = ${scanLevel}`, padL + 4, sy - 6);
+      }
+      
+      // Draw the dials (rails) - one for each possible value
+      const dialSpacing = chartW / RANGE;
+      const dialWidth = Math.min(34, Math.max(18, dialSpacing * 0.6));
+      
+      for (let v = MIN_VAL; v <= MAX_VAL; v++) {
+        const idx = v;
+        const freq = frequencies[idx];
+        const cx = padL + (idx + 0.5) * dialSpacing;
+        const xLeft = cx - dialWidth/2;
+        
+        // Height of the value block (where the number sits)
+        const blockTopY = padT + chartH - (v + 0.5) * levelHeight;
+        const blockHeight = levelHeight * 0.7;
+        
+        // --- FULL RAIL (from the floor up to the value height) ---
+        // The rail is drawn from the floor to the top region of the block (blockTopY + blockHeight/2?)
+        // To keep it visually continuous, we draw the rail from the floor (padT+chartH) to blockTopY + blockHeight/2 (half the block)
+        const railTopY = padT + chartH;  // base
+        const railBottomY = blockTopY + blockHeight/2; // up to half the block (or to the top)
+        const railHeight = railTopY - railBottomY;
+        
+        if (railHeight > 0) {
+          // Rail intensity by frequency
+          const intensity = getIntensity(freq);
+          ctx.fillStyle = colors.litColor;
+          ctx.globalAlpha = intensity;
+          ctx.shadowBlur = (freq > 2) ? 8 : 2;
+          ctx.shadowColor = `rgba(239, 159, 39, ${intensity * 0.8})`;
+          ctx.fillRect(xLeft, railBottomY, dialWidth, railHeight);
+        }
+        
+        // Rail border (for definition)
+        ctx.globalAlpha = 0.7;
+        ctx.strokeStyle = colors.trackBorder;
+        ctx.lineWidth = 0.8;
+        ctx.strokeRect(xLeft, padT, dialWidth, chartH);
+        
+        // --- Numeric block (the one containing the value) ---
+        // This block is drawn on top, with a slightly stronger color but without variable opacity
+        ctx.globalAlpha = 1.0;
+        ctx.fillStyle = colors.litColor;
+        ctx.shadowBlur = 4;
+        ctx.shadowColor = `rgba(239, 159, 39, 0.6)`;
+        ctx.beginPath();
+        ctx.roundRect(xLeft + 2, blockTopY - blockHeight/2, dialWidth - 4, blockHeight, 5);
+        ctx.fill();
+        
+        // Number inside the block
+        ctx.fillStyle = "#0a0e16";
+        ctx.font = "bold 12px monospace";
+        ctx.textAlign = "center";
+        ctx.fillText(v, cx, blockTopY + 3);
+        
+        // Frequency superscript (optional, but useful)
+        if (freq > 1) {
+          ctx.fillStyle = "#ffdd99";
+          ctx.font = "bold 9px monospace";
+          ctx.fillText(`✧${freq}`, cx, blockTopY - 6);
+        }
+        
+        // Bottom label (dial value)
+        ctx.fillStyle = colors.textMuted;
+        ctx.font = "9px monospace";
+        ctx.fillText(`dial ${v}`, cx, padT + chartH + 16);
+        
+        ctx.shadowBlur = 0;
+        ctx.globalAlpha = 1.0;
+      }
+      
+      // Show totals
+      totalCountSpan.textContent = totalElements;
+    }
+    
+    if (!CanvasRenderingContext2D.prototype.roundRect) {
+      CanvasRenderingContext2D.prototype.roundRect = function(x, y, w, h, r) {
+        if (w < 2 * r) r = w / 2;
+        if (h < 2 * r) r = h / 2;
+        this.moveTo(x+r, y);
+        this.lineTo(x+w-r, y);
+        this.quadraticCurveTo(x+w, y, x+w, y+r);
+        this.lineTo(x+w, y+h-r);
+        this.quadraticCurveTo(x+w, y+h, x+w-r, y+h);
+        this.lineTo(x+r, y+h);
+        this.quadraticCurveTo(x, y+h, x, y+h-r);
+        this.lineTo(x, y+r);
+        this.quadraticCurveTo(x, y, x+r, y);
+        return this;
+      };
+    }
+    
+    function updateSortedOutput() {
+      const sorted = [];
+      for (let v = MIN_VAL; v <= MAX_VAL; v++) {
+        const freq = frequencies[v];
+        for (let i = 0; i < freq; i++) sorted.push(v);
+      }
+      if (sorted.length === 0) {
+        sortedValueSpan.textContent = '[ ]';
+      } else {
+        sortedValueSpan.textContent = '[ ' + sorted.join(' → ') + ' ]';
+      }
+    }
+    
+    function updateManualPreview(level) {
+      if (scanning) return;
+      const partial = [];
+      for (let v = MIN_VAL; v <= level; v++) {
+        const freq = frequencies[v];
+        for (let i = 0; i < freq; i++) partial.push(v);
+      }
+      if (partial.length === 0) {
+        manualPreviewDiv.innerHTML = `🔍 Level ${level} → no values ≤ ${level}.`;
+      } else {
+        manualPreviewDiv.innerHTML = `📊 Numbers ≤ ${level} (accumulated by brightness): <span>[ ${partial.join(' → ')} ]</span>`;
+      }
+      draw(level);
+    }
+    
+    function getCurrentManualLevel() {
+      return parseInt(manualSlider.value);
+    }
+    
+    function onManualChange() {
+      if (scanning) return;
+      const level = getCurrentManualLevel();
+      manualValueSpan.textContent = level;
+      updateManualPreview(level);
+    }
+    
+    // Data actions
+    function addValue() {
+      if (scanning) return;
+      const input = document.getElementById('val');
+      let v = parseInt(input.value);
+      if (isNaN(v)) v = 0;
+      if (v < MIN_VAL) v = MIN_VAL;
+      if (v > MAX_VAL) v = MAX_VAL;
+      frequencies[v]++;
+      totalElements++;
+      updateSortedOutput();
+      updateManualPreview(getCurrentManualLevel());
+    }
+    
+    function resetAll() {
+      if (scanning) return;
+      frequencies.fill(0);
+      totalElements = 0;
+      updateSortedOutput();
+      updateManualPreview(getCurrentManualLevel());
+    }
+    
+    function loadExample() {
+      if (scanning) return;
+      frequencies.fill(0);
+      totalElements = 0;
+      const example = [3, 7, 1, 7, 4, 7, 2];
+      for (let v of example) {
+        frequencies[v]++;
+        totalElements++;
+      }
+      updateSortedOutput();
+      updateManualPreview(getCurrentManualLevel());
+    }
+    
+    function randomVector() {
+      if (scanning) return;
+      frequencies.fill(0);
+      totalElements = 0;
+      const len = 7 + Math.floor(Math.random() * 6); // 7..12
+      for (let i = 0; i < len; i++) {
+        const v = Math.floor(Math.random() * (MAX_VAL + 1));
+        frequencies[v]++;
+        totalElements++;
+      }
+      // Ensure at least one duplicate
+      let hasDup = false;
+      for (let f of frequencies) if (f > 1) { hasDup = true; break; }
+      if (!hasDup && totalElements > 1) {
+        const idx1 = Math.floor(Math.random() * (MAX_VAL+1));
+        let idx2 = Math.floor(Math.random() * (MAX_VAL+1));
+        while (idx2 === idx1) idx2 = Math.floor(Math.random() * (MAX_VAL+1));
+        frequencies[idx1]++;
+        frequencies[idx2]++;
+        totalElements += 2;
+      }
+      updateSortedOutput();
+      updateManualPreview(getCurrentManualLevel());
+    }
+    
+    async function runScan() {
+      if (scanning) return;
+      if (totalElements === 0) {
+        updateManualPreview(getCurrentManualLevel());
+        return;
+      }
+      scanning = true;
+      const scanBtn = document.getElementById('scanBtn');
+      scanBtn.disabled = true;
+      scanBtn.style.opacity = '0.6';
+      manualSlider.disabled = true;
+      
+      const sortedResult = [];
+      for (let k = MIN_VAL; k <= MAX_VAL; k++) {
+        draw(k);
+        await sleep(150);
+        const freq = frequencies[k];
+        for (let i = 0; i < freq; i++) {
+          sortedResult.push(k);
+          if (sortedResult.length === 0) sortedValueSpan.textContent = '[ ]';
+          else sortedValueSpan.textContent = '[ ' + sortedResult.join(' → ') + ' ]';
+        }
+        if (freq > 0) await sleep(100);
+      }
+      draw(-1);
+      updateSortedOutput();
+      scanning = false;
+      scanBtn.disabled = false;
+      scanBtn.style.opacity = '1';
+      manualSlider.disabled = false;
+      updateManualPreview(getCurrentManualLevel());
+    }
+    
+    function sleep(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+    
+    window.addEventListener('resize', () => {
+      setCanvasSize();
+      if (!scanning) updateManualPreview(getCurrentManualLevel());
+    });
+    
+    // Expose global functions
+    window.addValue = addValue;
+    window.randomVector = randomVector;
+    window.runScan = runScan;
+    window.resetAll = resetAll;
+    window.loadExample = loadExample;
+    
+    // Initialize
+    setCanvasSize();
+    manualSlider.addEventListener('input', onManualChange);
+    loadExample();
+  })();
+</script>
+</body>
+</html>
