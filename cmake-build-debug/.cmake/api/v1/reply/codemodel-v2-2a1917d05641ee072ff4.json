@@ -1,0 +1,78 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"jsonFile" : "directory-.-Debug-d0094a50bb2071803777.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.27"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "dsortcpp",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "bench_counting::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-bench_counting-Debug-2e9c0e794c8753ca3b39.json",
+					"name" : "bench_counting",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "bench_ips4o::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-bench_ips4o-Debug-2b08d0cca81334e320c0.json",
+					"name" : "bench_ips4o",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "dsortcpp::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-dsortcpp-Debug-8326dccc0ec626866ac2.json",
+					"name" : "dsortcpp",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "C:/EAFIT 2026/DIALSORT/dsortcpp/cmake-build-debug",
+		"source" : "C:/EAFIT 2026/DIALSORT/dsortcpp"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 6
+	}
+}

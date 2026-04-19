@@ -1,0 +1,673 @@
+================================================================
+DialSort vs. IPS4o — Sequential + Parallel Benchmark
+Paper: DialSort: Non-Comparative Integer Sorting
+       via the Self-Indexing Principle
+================================================================
+Compiler     : g++ 11.4.0
+Flags        : -O3 -std=c++17 -pthread -ltbb
+Threads      : 8
+Warmup       : 3 discarded runs
+Measurement  : best-of-7 + mean + std dev reported
+Seed         : 20260321
+IPS4o-par    : ENABLED (8 TBB threads)
+================================================================
+
+FAIR COMPARISON NOTE
+  Sequential regime : DialSort       vs IPS4o-seq  (both 1 thread)
+  Parallel  regime  : DialSort-Par   vs IPS4o-par  (both 8 threads)
+  Cross-regime rows are shown for reference only.
+================================================================
+
+TABLE — All algorithms, all configurations
+Columns: best(ms) | mean(ms) | std(ms) | M keys/s | vs std::sort
+
+Algorithm                 Dist      N           U       best(ms)     mean(ms)   std(ms)    M keys/s      vs std::sort  OK
+----------------------------------------------------------------------------------------------------------------------------------
+── seq ──
+std::sort                 uniform   10000       256     0.442        0.492      0.035      22.614        1.000         OK
+DialSort                  uniform   10000       256     0.019        0.020      0.002      529.101       23.397        OK
+IPS4o-seq                 uniform   10000       256     0.196        0.209      0.015      51.020        2.256         OK
+── par ──
+DialSort-Parallel         uniform   10000       256     0.517        0.721      0.147      19.354        0.856         OK
+IPS4o-par                 uniform   10000       256     0.209        0.237      0.031      47.870        2.117         OK
+
+── seq ──
+std::sort                 skewed    10000       256     0.364        0.376      0.014      27.465        1.000         OK
+DialSort                  skewed    10000       256     0.018        0.018      0.000      558.659       20.341        OK
+IPS4o-seq                 skewed    10000       256     0.120        0.130      0.011      83.612        3.044         OK
+── par ──
+DialSort-Parallel         skewed    10000       256     0.667        3.004      6.043      14.999        0.546         OK
+IPS4o-par                 skewed    10000       256     0.132        0.143      0.015      76.046        2.769         OK
+
+── seq ──
+std::sort                 sorted    10000       256     0.134        0.143      0.008      74.906        1.000         OK
+DialSort                  sorted    10000       256     0.023        0.023      0.000      432.900       5.779         OK
+IPS4o-seq                 sorted    10000       256     0.011        0.011      0.000      909.091       12.136        OK
+── par ──
+DialSort-Parallel         sorted    10000       256     0.640        0.690      0.032      15.627        0.209         OK
+IPS4o-par                 sorted    10000       256     0.019        0.020      0.000      523.560       6.990         OK
+
+── seq ──
+std::sort                 reverse   10000       256     0.147        0.162      0.024      67.797        1.000         OK
+DialSort                  reverse   10000       256     0.023        0.024      0.000      436.681       6.441         OK
+IPS4o-seq                 reverse   10000       256     0.011        0.011      0.000      925.926       13.657        OK
+── par ──
+DialSort-Parallel         reverse   10000       256     0.517        0.644      0.156      19.357        0.286         OK
+IPS4o-par                 reverse   10000       256     0.019        0.020      0.001      529.101       7.804         OK
+
+── seq ──
+std::sort                 uniform   10000       1024    0.539        0.568      0.028      18.563        1.000         OK
+DialSort                  uniform   10000       1024    0.024        0.027      0.005      414.938       22.353        OK
+IPS4o-seq                 uniform   10000       1024    0.305        0.531      0.559      32.787        1.766         OK
+── par ──
+DialSort-Parallel         uniform   10000       1024    0.849        1.072      0.205      11.774        0.634         OK
+IPS4o-par                 uniform   10000       1024    0.312        0.329      0.022      32.041        1.726         OK
+
+── seq ──
+std::sort                 skewed    10000       1024    0.442        0.463      0.035      22.619        1.000         OK
+DialSort                  skewed    10000       1024    0.022        0.023      0.001      458.716       20.280        OK
+IPS4o-seq                 skewed    10000       1024    0.194        0.206      0.016      51.520        2.278         OK
+── par ──
+DialSort-Parallel         skewed    10000       1024    0.787        1.194      0.474      12.713        0.562         OK
+IPS4o-par                 skewed    10000       1024    0.208        0.213      0.002      47.985        2.121         OK
+
+── seq ──
+std::sort                 sorted    10000       1024    0.161        0.175      0.033      61.996        1.000         OK
+DialSort                  sorted    10000       1024    0.028        0.029      0.001      358.423       5.781         OK
+IPS4o-seq                 sorted    10000       1024    0.011        0.011      0.000      925.926       14.935        OK
+── par ──
+DialSort-Parallel         sorted    10000       1024    0.746        0.892      0.143      13.408        0.216         OK
+IPS4o-par                 sorted    10000       1024    0.020        0.023      0.007      507.614       8.188         OK
+
+── seq ──
+std::sort                 reverse   10000       1024    0.177        0.196      0.038      56.593        1.000         OK
+DialSort                  reverse   10000       1024    0.027        0.029      0.001      370.370       6.544         OK
+IPS4o-seq                 reverse   10000       1024    0.008        0.008      0.000      1190.476      21.036        OK
+── par ──
+DialSort-Parallel         reverse   10000       1024    0.974        1.043      0.050      10.269        0.181         OK
+IPS4o-par                 reverse   10000       1024    0.013        0.014      0.001      740.741       13.089        OK
+
+── seq ──
+std::sort                 uniform   10000       65536   0.580        0.618      0.049      17.235        1.000         OK
+DialSort                  uniform   10000       65536   0.265        0.269      0.008      37.807        2.194         OK
+IPS4o-seq                 uniform   10000       65536   0.192        0.220      0.021      52.165        3.027         OK
+── par ──
+DialSort-Parallel         uniform   10000       65536   0.845        1.123      0.345      11.829        0.686         OK
+IPS4o-par                 uniform   10000       65536   0.196        0.206      0.013      50.994        2.959         OK
+
+── seq ──
+std::sort                 skewed    10000       65536   0.563        1.758      3.072      17.759        1.000         OK
+DialSort                  skewed    10000       65536   0.187        0.202      0.010      53.591        3.018         OK
+IPS4o-seq                 skewed    10000       65536   0.224        0.277      0.035      44.643        2.514         OK
+── par ──
+DialSort-Parallel         skewed    10000       65536   1.167        3.989      4.719      8.572         0.483         OK
+IPS4o-par                 skewed    10000       65536   0.318        0.350      0.035      31.447        1.771         OK
+
+── seq ──
+std::sort                 sorted    10000       65536   0.129        0.139      0.011      77.280        1.000         OK
+DialSort                  sorted    10000       65536   0.235        1.612      3.236      42.626        0.552         OK
+IPS4o-seq                 sorted    10000       65536   0.010        0.010      0.000      990.099       12.812        OK
+── par ──
+DialSort-Parallel         sorted    10000       65536   1.260        3.594      6.036      7.938         0.103         OK
+IPS4o-par                 sorted    10000       65536   0.017        0.017      0.000      591.716       7.657         OK
+
+── seq ──
+std::sort                 reverse   10000       65536   0.108        0.110      0.003      92.678        1.000         OK
+DialSort                  reverse   10000       65536   0.244        0.262      0.026      40.967        0.442         OK
+IPS4o-seq                 reverse   10000       65536   0.009        0.009      0.001      1162.791      12.547        OK
+── par ──
+DialSort-Parallel         reverse   10000       65536   1.278        3.989      4.233      7.825         0.084         OK
+IPS4o-par                 reverse   10000       65536   0.013        0.015      0.002      787.402       8.496         OK
+
+── seq ──
+std::sort                 uniform   100000      256     4.903        11.526     4.493      20.395        1.000         OK
+DialSort                  uniform   100000      256     0.173        0.179      0.011      578.369       28.359        OK
+IPS4o-seq                 uniform   100000      256     1.810        4.726      4.889      55.264        2.710         OK
+── par ──
+DialSort-Parallel         uniform   100000      256     0.792        0.884      0.106      126.183       6.187         OK
+IPS4o-par                 uniform   100000      256     3.731        6.390      5.663      26.800        1.314         OK
+
+── seq ──
+std::sort                 skewed    100000      256     4.452        11.645     4.790      22.462        1.000         OK
+DialSort                  skewed    100000      256     0.202        1.682      3.895      496.278       22.094        OK
+IPS4o-seq                 skewed    100000      256     1.066        2.435      3.438      93.809        4.176         OK
+── par ──
+DialSort-Parallel         skewed    100000      256     0.972        3.327      6.071      102.838       4.578         OK
+IPS4o-par                 skewed    100000      256     4.006        6.351      3.772      24.963        1.111         OK
+
+── seq ──
+std::sort                 sorted    100000      256     1.876        3.528      3.367      53.294        1.000         OK
+DialSort                  sorted    100000      256     0.294        0.312      0.017      339.674       6.374         OK
+IPS4o-seq                 sorted    100000      256     0.149        0.155      0.011      670.241       12.576        OK
+── par ──
+DialSort-Parallel         sorted    100000      256     0.851        3.799      7.322      117.467       2.204         OK
+IPS4o-par                 sorted    100000      256     1.539        1.586      0.038      64.973        1.219         OK
+
+── seq ──
+std::sort                 reverse   100000      256     2.326        3.683      3.403      42.994        1.000         OK
+DialSort                  reverse   100000      256     0.318        0.336      0.020      314.268       7.310         OK
+IPS4o-seq                 reverse   100000      256     0.142        0.171      0.026      704.225       16.380        OK
+── par ──
+DialSort-Parallel         reverse   100000      256     1.125        4.619      6.230      88.905        2.068         OK
+IPS4o-par                 reverse   100000      256     4.587        7.829      5.892      21.799        0.507         OK
+
+── seq ──
+std::sort                 uniform   100000      1024    6.955        14.853     7.444      14.379        1.000         OK
+DialSort                  uniform   100000      1024    0.166        0.167      0.000      601.323       41.820        OK
+IPS4o-seq                 uniform   100000      1024    2.791        8.268      4.948      35.826        2.492         OK
+── par ──
+DialSort-Parallel         uniform   100000      1024    1.106        1.190      0.059      90.449        6.290         OK
+IPS4o-par                 uniform   100000      1024    4.566        4.651      0.082      21.901        1.523         OK
+
+── seq ──
+std::sort                 skewed    100000      1024    7.066        13.753     4.766      14.152        1.000         OK
+DialSort                  skewed    100000      1024    0.272        1.764      3.925      367.918       25.997        OK
+IPS4o-seq                 skewed    100000      1024    1.346        1.625      0.258      74.283        5.249         OK
+── par ──
+DialSort-Parallel         skewed    100000      1024    1.166        3.548      5.819      85.793        6.062         OK
+IPS4o-par                 skewed    100000      1024    5.124        7.217      1.845      19.518        1.379         OK
+
+── seq ──
+std::sort                 sorted    100000      1024    1.420        1.833      0.344      70.442        1.000         OK
+DialSort                  sorted    100000      1024    0.286        0.298      0.023      349.650       4.964         OK
+IPS4o-seq                 sorted    100000      1024    0.084        0.144      0.064      1193.317      16.940        OK
+── par ──
+DialSort-Parallel         sorted    100000      1024    1.003        1.101      0.109      99.721        1.416         OK
+IPS4o-par                 sorted    100000      1024    1.428        1.615      0.161      70.038        0.994         OK
+
+── seq ──
+std::sort                 reverse   100000      1024    1.484        2.016      0.516      67.399        1.000         OK
+DialSort                  reverse   100000      1024    0.287        0.311      0.021      348.797       5.175         OK
+IPS4o-seq                 reverse   100000      1024    0.099        0.117      0.034      1014.199      15.048        OK
+── par ──
+DialSort-Parallel         reverse   100000      1024    1.002        1.114      0.122      99.800        1.481         OK
+IPS4o-par                 reverse   100000      1024    4.130        6.098      1.493      24.216        0.359         OK
+
+── seq ──
+std::sort                 uniform   100000      65536   9.323        9.856      0.458      10.726        1.000         OK
+DialSort                  uniform   100000      65536   0.935        1.059      0.165      106.986       9.975         OK
+IPS4o-seq                 uniform   100000      65536   3.668        4.058      0.411      27.259        2.541         OK
+── par ──
+DialSort-Parallel         uniform   100000      65536   2.190        2.371      0.115      45.668        4.258         OK
+IPS4o-par                 uniform   100000      65536   4.395        7.389      2.520      22.752        2.121         OK
+
+── seq ──
+std::sort                 skewed    100000      65536   8.241        8.925      0.451      12.134        1.000         OK
+DialSort                  skewed    100000      65536   0.574        0.800      0.183      174.307       14.365        OK
+IPS4o-seq                 skewed    100000      65536   2.625        3.106      0.549      38.089        3.139         OK
+── par ──
+DialSort-Parallel         skewed    100000      65536   1.857        2.308      0.384      53.862        4.439         OK
+IPS4o-par                 skewed    100000      65536   6.001        9.674      3.759      16.663        1.373         OK
+
+── seq ──
+std::sort                 sorted    100000      65536   1.794        2.074      0.301      55.738        1.000         OK
+DialSort                  sorted    100000      65536   0.853        1.032      0.213      117.288       2.104         OK
+IPS4o-seq                 sorted    100000      65536   0.087        0.138      0.041      1144.165      20.527        OK
+── par ──
+DialSort-Parallel         sorted    100000      65536   2.342        2.652      0.308      42.700        0.766         OK
+IPS4o-par                 sorted    100000      65536   1.398        1.578      0.108      71.551        1.284         OK
+
+── seq ──
+std::sort                 reverse   100000      65536   1.919        2.393      0.425      52.119        1.000         OK
+DialSort                  reverse   100000      65536   0.999        1.284      0.298      100.060       1.920         OK
+IPS4o-seq                 reverse   100000      65536   0.108        0.115      0.017      925.926       17.766        OK
+── par ──
+DialSort-Parallel         reverse   100000      65536   3.270        3.517      0.519      30.582        0.587         OK
+IPS4o-par                 reverse   100000      65536   5.762        8.613      3.135      17.355        0.333         OK
+
+── seq ──
+std::sort                 uniform   1000000     256     82.030       89.762     8.433      12.191        1.000         OK
+DialSort                  uniform   1000000     256     2.632        2.935      0.502      379.983       31.170        OK
+IPS4o-seq                 uniform   1000000     256     14.508       15.581     0.629      68.927        5.654         OK
+── par ──
+DialSort-Parallel         uniform   1000000     256     3.284        3.516      0.242      304.479       24.976        OK
+IPS4o-par                 uniform   1000000     256     9.461        11.109     1.662      105.693       8.670         OK
+
+── seq ──
+std::sort                 skewed    1000000     256     68.779       73.117     4.100      14.539        1.000         OK
+DialSort                  skewed    1000000     256     2.638        2.880      0.259      379.089       26.073        OK
+IPS4o-seq                 skewed    1000000     256     10.949       11.620     0.501      91.329        6.282         OK
+── par ──
+DialSort-Parallel         skewed    1000000     256     3.438        4.553      1.042      290.884       20.007        OK
+IPS4o-par                 skewed    1000000     256     13.338       16.094     2.414      74.975        5.157         OK
+
+── seq ──
+std::sort                 sorted    1000000     256     21.411       23.870     2.132      46.705        1.000         OK
+DialSort                  sorted    1000000     256     3.939        4.082      0.129      253.891       5.436         OK
+IPS4o-seq                 sorted    1000000     256     1.054        1.142      0.082      949.037       20.320        OK
+── par ──
+DialSort-Parallel         sorted    1000000     256     2.860        3.224      0.315      349.711       7.488         OK
+IPS4o-par                 sorted    1000000     256     1.897        2.866      2.013      527.093       11.286        OK
+
+── seq ──
+std::sort                 reverse   1000000     256     17.345       17.815     0.484      57.652        1.000         OK
+DialSort                  reverse   1000000     256     3.061        3.203      0.140      326.744       5.668         OK
+IPS4o-seq                 reverse   1000000     256     1.203        1.270      0.056      831.117       14.416        OK
+── par ──
+DialSort-Parallel         reverse   1000000     256     2.446        2.610      0.185      408.814       7.091         OK
+IPS4o-par                 reverse   1000000     256     7.624        10.413     2.367      131.158       2.275         OK
+
+── seq ──
+std::sort                 uniform   1000000     1024    57.465       59.630     1.358      17.402        1.000         OK
+DialSort                  uniform   1000000     1024    1.516        1.572      0.110      659.631       37.906        OK
+IPS4o-seq                 uniform   1000000     1024    11.528       12.209     0.531      86.742        4.985         OK
+── par ──
+DialSort-Parallel         uniform   1000000     1024    2.075        2.236      0.185      481.997       27.698        OK
+IPS4o-par                 uniform   1000000     1024    7.309        9.763      2.486      136.825       7.863         OK
+
+── seq ──
+std::sort                 skewed    1000000     1024    48.026       48.852     0.761      20.822        1.000         OK
+DialSort                  skewed    1000000     1024    1.496        1.563      0.089      668.271       32.094        OK
+IPS4o-seq                 skewed    1000000     1024    7.748        7.945      0.214      129.069       6.199         OK
+── par ──
+DialSort-Parallel         skewed    1000000     1024    1.956        2.319      0.329      511.247       24.553        OK
+IPS4o-par                 skewed    1000000     1024    5.780        7.750      1.381      173.004       8.309         OK
+
+── seq ──
+std::sort                 sorted    1000000     1024    13.722       13.900     0.157      72.874        1.000         OK
+DialSort                  sorted    1000000     1024    2.664        2.788      0.121      375.305       5.150         OK
+IPS4o-seq                 sorted    1000000     1024    0.784        0.874      0.218      1275.510      17.503        OK
+── par ──
+DialSort-Parallel         sorted    1000000     1024    2.099        2.263      0.089      476.463       6.538         OK
+IPS4o-par                 sorted    1000000     1024    1.356        1.508      0.087      737.681       10.123        OK
+
+── seq ──
+std::sort                 reverse   1000000     1024    12.983       13.429     0.319      77.025        1.000         OK
+DialSort                  reverse   1000000     1024    2.523        2.666      0.166      396.385       5.146         OK
+IPS4o-seq                 reverse   1000000     1024    0.944        0.992      0.048      1059.322      13.753        OK
+── par ──
+DialSort-Parallel         reverse   1000000     1024    1.940        2.045      0.080      515.570       6.694         OK
+IPS4o-par                 reverse   1000000     1024    5.226        5.586      0.383      191.344       2.484         OK
+
+── seq ──
+std::sort                 uniform   1000000     65536   64.141       67.769     2.688      15.591        1.000         OK
+DialSort                  uniform   1000000     65536   2.393        2.474      0.055      417.833       26.800        OK
+IPS4o-seq                 uniform   1000000     65536   22.128       22.562     0.351      45.191        2.899         OK
+── par ──
+DialSort-Parallel         uniform   1000000     65536   2.637        2.762      0.095      379.161       24.320        OK
+IPS4o-par                 uniform   1000000     65536   7.382        12.606     2.975      135.461       8.689         OK
+
+── seq ──
+std::sort                 skewed    1000000     65536   57.204       61.820     2.974      17.481        1.000         OK
+DialSort                  skewed    1000000     65536   2.059        2.214      0.277      485.625       27.780        OK
+IPS4o-seq                 skewed    1000000     65536   16.428       16.961     0.371      60.872        3.482         OK
+── par ──
+DialSort-Parallel         skewed    1000000     65536   2.606        2.756      0.132      383.671       21.948        OK
+IPS4o-par                 skewed    1000000     65536   6.364        6.583      0.140      157.144       8.989         OK
+
+── seq ──
+std::sort                 sorted    1000000     65536   14.807       14.912     0.097      67.534        1.000         OK
+DialSort                  sorted    1000000     65536   2.435        2.483      0.066      410.678       6.081         OK
+IPS4o-seq                 sorted    1000000     65536   0.643        0.701      0.063      1555.210      23.029        OK
+── par ──
+DialSort-Parallel         sorted    1000000     65536   2.740        2.870      0.122      364.950       5.404         OK
+IPS4o-par                 sorted    1000000     65536   1.044        1.137      0.119      957.488       14.178        OK
+
+── seq ──
+std::sort                 reverse   1000000     65536   14.458       14.675     0.139      69.165        1.000         OK
+DialSort                  reverse   1000000     65536   2.377        2.428      0.061      420.787       6.084         OK
+IPS4o-seq                 reverse   1000000     65536   0.817        0.887      0.072      1223.691      17.692        OK
+── par ──
+DialSort-Parallel         reverse   1000000     65536   3.264        3.316      0.043      306.326       4.429         OK
+IPS4o-par                 reverse   1000000     65536   7.309        7.832      0.869      136.821       1.978         OK
+
+── seq ──
+std::sort                 uniform   10000000    256     418.453      724.498    442.583    23.898        1.000         OK
+DialSort                  uniform   10000000    256     24.508       25.254     0.654      408.030       17.074        OK
+IPS4o-seq                 uniform   10000000    256     87.622       90.501     4.207      114.127       4.776         OK
+── par ──
+DialSort-Parallel         uniform   10000000    256     20.778       22.367     1.514      481.269       20.139        OK
+IPS4o-par                 uniform   10000000    256     33.689       35.945     1.802      296.834       12.421        OK
+
+── seq ──
+std::sort                 skewed    10000000    256     418.407      472.675    48.690     23.900        1.000         OK
+DialSort                  skewed    10000000    256     18.044       18.807     0.624      554.189       23.188        OK
+IPS4o-seq                 skewed    10000000    256     97.263       190.257    111.684    102.814       4.302         OK
+── par ──
+DialSort-Parallel         skewed    10000000    256     17.487       18.289     0.723      571.860       23.927        OK
+IPS4o-par                 skewed    10000000    256     39.867       44.496     2.647      250.831       10.495        OK
+
+── seq ──
+std::sort                 sorted    10000000    256     184.626      200.325    13.071     54.164        1.000         OK
+DialSort                  sorted    10000000    256     28.999       30.117     1.111      344.842       6.367         OK
+IPS4o-seq                 sorted    10000000    256     37.132       45.823     4.476      269.309       4.972         OK
+── par ──
+DialSort-Parallel         sorted    10000000    256     17.085       21.081     3.397      585.292       10.806        OK
+IPS4o-par                 sorted    10000000    256     6.412        9.066      3.189      1559.624      28.795        OK
+
+── seq ──
+std::sort                 reverse   10000000    256     215.977      228.589    19.109     46.301        1.000         OK
+DialSort                  reverse   10000000    256     30.560       31.863     0.908      327.225       7.067         OK
+IPS4o-seq                 reverse   10000000    256     13.136       14.121     0.693      761.244       16.441        OK
+── par ──
+DialSort-Parallel         reverse   10000000    256     16.937       19.084     1.239      590.413       12.752        OK
+IPS4o-par                 reverse   10000000    256     41.773       70.307     25.579     239.389       5.170         OK
+
+── seq ──
+std::sort                 uniform   10000000    1024    646.211      1096.099   526.624    15.475        1.000         OK
+DialSort                  uniform   10000000    1024    21.312       25.344     2.469      469.224       30.322        OK
+IPS4o-seq                 uniform   10000000    1024    110.723      116.614    5.209      90.315        5.836         OK
+── par ──
+DialSort-Parallel         uniform   10000000    1024    19.676       20.653     1.429      508.239       32.843        OK
+IPS4o-par                 uniform   10000000    1024    71.976       106.298    23.292     138.935       8.978         OK
+
+── seq ──
+std::sort                 skewed    10000000    1024    621.544      885.316    301.794    16.089        1.000         OK
+DialSort                  skewed    10000000    1024    22.011       26.414     4.257      454.314       28.238        OK
+IPS4o-seq                 skewed    10000000    1024    79.377       125.540    41.772     125.981       7.830         OK
+── par ──
+DialSort-Parallel         skewed    10000000    1024    17.568       18.783     0.660      569.204       35.379        OK
+IPS4o-par                 skewed    10000000    1024    38.008       46.979     9.283      263.102       16.353        OK
+
+── seq ──
+std::sort                 sorted    10000000    1024    177.707      194.753    13.199     56.272        1.000         OK
+DialSort                  sorted    10000000    1024    33.235       34.876     1.422      300.884       5.347         OK
+IPS4o-seq                 sorted    10000000    1024    8.915        9.518      0.498      1121.655      19.933        OK
+── par ──
+DialSort-Parallel         sorted    10000000    1024    20.561       22.019     0.720      486.355       8.643         OK
+IPS4o-par                 sorted    10000000    1024    4.375        5.661      0.576      2285.819      40.621        OK
+
+── seq ──
+std::sort                 reverse   10000000    1024    212.314      420.604    327.889    47.100        1.000         OK
+DialSort                  reverse   10000000    1024    39.347       40.441     0.892      254.146       5.396         OK
+IPS4o-seq                 reverse   10000000    1024    13.422       13.879     0.342      745.040       15.818        OK
+── par ──
+DialSort-Parallel         reverse   10000000    1024    21.505       23.303     1.540      465.008       9.873         OK
+IPS4o-par                 reverse   10000000    1024    44.894       63.053     10.389     222.746       4.729         OK
+
+── seq ──
+std::sort                 uniform   10000000    65536   791.340      1029.467   323.347    12.637        1.000         OK
+DialSort                  uniform   10000000    65536   31.335       33.022     1.654      319.131       25.254        OK
+IPS4o-seq                 uniform   10000000    65536   203.289      220.073    14.766     49.191        3.893         OK
+── par ──
+DialSort-Parallel         uniform   10000000    65536   24.260       26.426     1.110      412.208       32.620        OK
+IPS4o-par                 uniform   10000000    65536   68.029       93.297     22.847     146.996       11.632        OK
+
+── seq ──
+std::sort                 skewed    10000000    65536   743.260      1062.424   507.909    13.454        1.000         OK
+DialSort                  skewed    10000000    65536   24.483       27.887     2.155      408.450       30.358        OK
+IPS4o-seq                 skewed    10000000    65536   150.312      169.300    11.382     66.528        4.945         OK
+── par ──
+DialSort-Parallel         skewed    10000000    65536   19.768       20.940     1.235      505.860       37.599        OK
+IPS4o-par                 skewed    10000000    65536   56.880       69.703     10.496     175.810       13.067        OK
+
+── seq ──
+std::sort                 sorted    10000000    65536   183.483      227.547    35.317     54.501        1.000         OK
+DialSort                  sorted    10000000    65536   28.170       29.550     1.111      354.988       6.513         OK
+IPS4o-seq                 sorted    10000000    65536   8.682        10.679     3.276      1151.822      21.134        OK
+── par ──
+DialSort-Parallel         sorted    10000000    65536   16.545       19.130     1.787      604.427       11.090        OK
+IPS4o-par                 sorted    10000000    65536   4.191        5.105      0.605      2386.179      43.782        OK
+
+── seq ──
+std::sort                 reverse   10000000    65536   171.258      182.331    12.147     58.392        1.000         OK
+DialSort                  reverse   10000000    65536   27.256       27.769     0.456      366.897       6.283         OK
+IPS4o-seq                 reverse   10000000    65536   11.891       12.181     0.210      840.993       14.403        OK
+── par ──
+DialSort-Parallel         reverse   10000000    65536   16.739       17.715     0.751      597.414       10.231        OK
+IPS4o-par                 reverse   10000000    65536   68.240       87.083     19.837     146.542       2.510         OK
+
+================================================================
+SUMMARY
+================================================================
+
+[SEQUENTIAL] DialSort vs IPS4o-seq
+  Configs     : 48
+  DS faster   : 24 / 48
+  Avg ratio   : 2.738  (< 1.0 = DS faster)
+  Best ratio  : 0.060
+  Worst ratio : 28.384
+
+[PARALLEL 8 threads] DialSort-Par vs IPS4o-par
+  Configs     : 48
+  DS-Par faster : 29 / 48
+  Avg ratio   : 8.281  (< 1.0 = DS-Par faster)
+  Best ratio  : 0.212
+  Worst ratio : 100.630
+
+All correctness checks: PASSED
+
+================================================================
+CSV OUTPUT
+================================================================
+algo,dist,N,U,ms_best,ms_mean,ms_std,Mkeys_per_s,speedup_vs_std,correct
+std::sort,uniform,10000,256,0.442,0.492,0.035,22.614,1.000,OK
+DialSort,uniform,10000,256,0.019,0.020,0.002,529.101,23.397,OK
+DialSort-Parallel,uniform,10000,256,0.517,0.721,0.147,19.354,0.856,OK
+IPS4o-seq,uniform,10000,256,0.196,0.209,0.015,51.020,2.256,OK
+IPS4o-par,uniform,10000,256,0.209,0.237,0.031,47.870,2.117,OK
+std::sort,skewed,10000,256,0.364,0.376,0.014,27.465,1.000,OK
+DialSort,skewed,10000,256,0.018,0.018,0.000,558.659,20.341,OK
+DialSort-Parallel,skewed,10000,256,0.667,3.004,6.043,14.999,0.546,OK
+IPS4o-seq,skewed,10000,256,0.120,0.130,0.011,83.612,3.044,OK
+IPS4o-par,skewed,10000,256,0.132,0.143,0.015,76.046,2.769,OK
+std::sort,sorted,10000,256,0.134,0.143,0.008,74.906,1.000,OK
+DialSort,sorted,10000,256,0.023,0.023,0.000,432.900,5.779,OK
+DialSort-Parallel,sorted,10000,256,0.640,0.690,0.032,15.627,0.209,OK
+IPS4o-seq,sorted,10000,256,0.011,0.011,0.000,909.091,12.136,OK
+IPS4o-par,sorted,10000,256,0.019,0.020,0.000,523.560,6.990,OK
+std::sort,reverse,10000,256,0.147,0.162,0.024,67.797,1.000,OK
+DialSort,reverse,10000,256,0.023,0.024,0.000,436.681,6.441,OK
+DialSort-Parallel,reverse,10000,256,0.517,0.644,0.156,19.357,0.286,OK
+IPS4o-seq,reverse,10000,256,0.011,0.011,0.000,925.926,13.657,OK
+IPS4o-par,reverse,10000,256,0.019,0.020,0.001,529.101,7.804,OK
+std::sort,uniform,10000,1024,0.539,0.568,0.028,18.563,1.000,OK
+DialSort,uniform,10000,1024,0.024,0.027,0.005,414.938,22.353,OK
+DialSort-Parallel,uniform,10000,1024,0.849,1.072,0.205,11.774,0.634,OK
+IPS4o-seq,uniform,10000,1024,0.305,0.531,0.559,32.787,1.766,OK
+IPS4o-par,uniform,10000,1024,0.312,0.329,0.022,32.041,1.726,OK
+std::sort,skewed,10000,1024,0.442,0.463,0.035,22.619,1.000,OK
+DialSort,skewed,10000,1024,0.022,0.023,0.001,458.716,20.280,OK
+DialSort-Parallel,skewed,10000,1024,0.787,1.194,0.474,12.713,0.562,OK
+IPS4o-seq,skewed,10000,1024,0.194,0.206,0.016,51.520,2.278,OK
+IPS4o-par,skewed,10000,1024,0.208,0.213,0.002,47.985,2.121,OK
+std::sort,sorted,10000,1024,0.161,0.175,0.033,61.996,1.000,OK
+DialSort,sorted,10000,1024,0.028,0.029,0.001,358.423,5.781,OK
+DialSort-Parallel,sorted,10000,1024,0.746,0.892,0.143,13.408,0.216,OK
+IPS4o-seq,sorted,10000,1024,0.011,0.011,0.000,925.926,14.935,OK
+IPS4o-par,sorted,10000,1024,0.020,0.023,0.007,507.614,8.188,OK
+std::sort,reverse,10000,1024,0.177,0.196,0.038,56.593,1.000,OK
+DialSort,reverse,10000,1024,0.027,0.029,0.001,370.370,6.544,OK
+DialSort-Parallel,reverse,10000,1024,0.974,1.043,0.050,10.269,0.181,OK
+IPS4o-seq,reverse,10000,1024,0.008,0.008,0.000,1190.476,21.036,OK
+IPS4o-par,reverse,10000,1024,0.013,0.014,0.001,740.741,13.089,OK
+std::sort,uniform,10000,65536,0.580,0.618,0.049,17.235,1.000,OK
+DialSort,uniform,10000,65536,0.265,0.269,0.008,37.807,2.194,OK
+DialSort-Parallel,uniform,10000,65536,0.845,1.123,0.345,11.829,0.686,OK
+IPS4o-seq,uniform,10000,65536,0.192,0.220,0.021,52.165,3.027,OK
+IPS4o-par,uniform,10000,65536,0.196,0.206,0.013,50.994,2.959,OK
+std::sort,skewed,10000,65536,0.563,1.758,3.072,17.759,1.000,OK
+DialSort,skewed,10000,65536,0.187,0.202,0.010,53.591,3.018,OK
+DialSort-Parallel,skewed,10000,65536,1.167,3.989,4.719,8.572,0.483,OK
+IPS4o-seq,skewed,10000,65536,0.224,0.277,0.035,44.643,2.514,OK
+IPS4o-par,skewed,10000,65536,0.318,0.350,0.035,31.447,1.771,OK
+std::sort,sorted,10000,65536,0.129,0.139,0.011,77.280,1.000,OK
+DialSort,sorted,10000,65536,0.235,1.612,3.236,42.626,0.552,OK
+DialSort-Parallel,sorted,10000,65536,1.260,3.594,6.036,7.938,0.103,OK
+IPS4o-seq,sorted,10000,65536,0.010,0.010,0.000,990.099,12.812,OK
+IPS4o-par,sorted,10000,65536,0.017,0.017,0.000,591.716,7.657,OK
+std::sort,reverse,10000,65536,0.108,0.110,0.003,92.678,1.000,OK
+DialSort,reverse,10000,65536,0.244,0.262,0.026,40.967,0.442,OK
+DialSort-Parallel,reverse,10000,65536,1.278,3.989,4.233,7.825,0.084,OK
+IPS4o-seq,reverse,10000,65536,0.009,0.009,0.001,1162.791,12.547,OK
+IPS4o-par,reverse,10000,65536,0.013,0.015,0.002,787.402,8.496,OK
+std::sort,uniform,100000,256,4.903,11.526,4.493,20.395,1.000,OK
+DialSort,uniform,100000,256,0.173,0.179,0.011,578.369,28.359,OK
+DialSort-Parallel,uniform,100000,256,0.792,0.884,0.106,126.183,6.187,OK
+IPS4o-seq,uniform,100000,256,1.810,4.726,4.889,55.264,2.710,OK
+IPS4o-par,uniform,100000,256,3.731,6.390,5.663,26.800,1.314,OK
+std::sort,skewed,100000,256,4.452,11.645,4.790,22.462,1.000,OK
+DialSort,skewed,100000,256,0.202,1.682,3.895,496.278,22.094,OK
+DialSort-Parallel,skewed,100000,256,0.972,3.327,6.071,102.838,4.578,OK
+IPS4o-seq,skewed,100000,256,1.066,2.435,3.438,93.809,4.176,OK
+IPS4o-par,skewed,100000,256,4.006,6.351,3.772,24.963,1.111,OK
+std::sort,sorted,100000,256,1.876,3.528,3.367,53.294,1.000,OK
+DialSort,sorted,100000,256,0.294,0.312,0.017,339.674,6.374,OK
+DialSort-Parallel,sorted,100000,256,0.851,3.799,7.322,117.467,2.204,OK
+IPS4o-seq,sorted,100000,256,0.149,0.155,0.011,670.241,12.576,OK
+IPS4o-par,sorted,100000,256,1.539,1.586,0.038,64.973,1.219,OK
+std::sort,reverse,100000,256,2.326,3.683,3.403,42.994,1.000,OK
+DialSort,reverse,100000,256,0.318,0.336,0.020,314.268,7.310,OK
+DialSort-Parallel,reverse,100000,256,1.125,4.619,6.230,88.905,2.068,OK
+IPS4o-seq,reverse,100000,256,0.142,0.171,0.026,704.225,16.380,OK
+IPS4o-par,reverse,100000,256,4.587,7.829,5.892,21.799,0.507,OK
+std::sort,uniform,100000,1024,6.955,14.853,7.444,14.379,1.000,OK
+DialSort,uniform,100000,1024,0.166,0.167,0.000,601.323,41.820,OK
+DialSort-Parallel,uniform,100000,1024,1.106,1.190,0.059,90.449,6.290,OK
+IPS4o-seq,uniform,100000,1024,2.791,8.268,4.948,35.826,2.492,OK
+IPS4o-par,uniform,100000,1024,4.566,4.651,0.082,21.901,1.523,OK
+std::sort,skewed,100000,1024,7.066,13.753,4.766,14.152,1.000,OK
+DialSort,skewed,100000,1024,0.272,1.764,3.925,367.918,25.997,OK
+DialSort-Parallel,skewed,100000,1024,1.166,3.548,5.819,85.793,6.062,OK
+IPS4o-seq,skewed,100000,1024,1.346,1.625,0.258,74.283,5.249,OK
+IPS4o-par,skewed,100000,1024,5.124,7.217,1.845,19.518,1.379,OK
+std::sort,sorted,100000,1024,1.420,1.833,0.344,70.442,1.000,OK
+DialSort,sorted,100000,1024,0.286,0.298,0.023,349.650,4.964,OK
+DialSort-Parallel,sorted,100000,1024,1.003,1.101,0.109,99.721,1.416,OK
+IPS4o-seq,sorted,100000,1024,0.084,0.144,0.064,1193.317,16.940,OK
+IPS4o-par,sorted,100000,1024,1.428,1.615,0.161,70.038,0.994,OK
+std::sort,reverse,100000,1024,1.484,2.016,0.516,67.399,1.000,OK
+DialSort,reverse,100000,1024,0.287,0.311,0.021,348.797,5.175,OK
+DialSort-Parallel,reverse,100000,1024,1.002,1.114,0.122,99.800,1.481,OK
+IPS4o-seq,reverse,100000,1024,0.099,0.117,0.034,1014.199,15.048,OK
+IPS4o-par,reverse,100000,1024,4.130,6.098,1.493,24.216,0.359,OK
+std::sort,uniform,100000,65536,9.323,9.856,0.458,10.726,1.000,OK
+DialSort,uniform,100000,65536,0.935,1.059,0.165,106.986,9.975,OK
+DialSort-Parallel,uniform,100000,65536,2.190,2.371,0.115,45.668,4.258,OK
+IPS4o-seq,uniform,100000,65536,3.668,4.058,0.411,27.259,2.541,OK
+IPS4o-par,uniform,100000,65536,4.395,7.389,2.520,22.752,2.121,OK
+std::sort,skewed,100000,65536,8.241,8.925,0.451,12.134,1.000,OK
+DialSort,skewed,100000,65536,0.574,0.800,0.183,174.307,14.365,OK
+DialSort-Parallel,skewed,100000,65536,1.857,2.308,0.384,53.862,4.439,OK
+IPS4o-seq,skewed,100000,65536,2.625,3.106,0.549,38.089,3.139,OK
+IPS4o-par,skewed,100000,65536,6.001,9.674,3.759,16.663,1.373,OK
+std::sort,sorted,100000,65536,1.794,2.074,0.301,55.738,1.000,OK
+DialSort,sorted,100000,65536,0.853,1.032,0.213,117.288,2.104,OK
+DialSort-Parallel,sorted,100000,65536,2.342,2.652,0.308,42.700,0.766,OK
+IPS4o-seq,sorted,100000,65536,0.087,0.138,0.041,1144.165,20.527,OK
+IPS4o-par,sorted,100000,65536,1.398,1.578,0.108,71.551,1.284,OK
+std::sort,reverse,100000,65536,1.919,2.393,0.425,52.119,1.000,OK
+DialSort,reverse,100000,65536,0.999,1.284,0.298,100.060,1.920,OK
+DialSort-Parallel,reverse,100000,65536,3.270,3.517,0.519,30.582,0.587,OK
+IPS4o-seq,reverse,100000,65536,0.108,0.115,0.017,925.926,17.766,OK
+IPS4o-par,reverse,100000,65536,5.762,8.613,3.135,17.355,0.333,OK
+std::sort,uniform,1000000,256,82.030,89.762,8.433,12.191,1.000,OK
+DialSort,uniform,1000000,256,2.632,2.935,0.502,379.983,31.170,OK
+DialSort-Parallel,uniform,1000000,256,3.284,3.516,0.242,304.479,24.976,OK
+IPS4o-seq,uniform,1000000,256,14.508,15.581,0.629,68.927,5.654,OK
+IPS4o-par,uniform,1000000,256,9.461,11.109,1.662,105.693,8.670,OK
+std::sort,skewed,1000000,256,68.779,73.117,4.100,14.539,1.000,OK
+DialSort,skewed,1000000,256,2.638,2.880,0.259,379.089,26.073,OK
+DialSort-Parallel,skewed,1000000,256,3.438,4.553,1.042,290.884,20.007,OK
+IPS4o-seq,skewed,1000000,256,10.949,11.620,0.501,91.329,6.282,OK
+IPS4o-par,skewed,1000000,256,13.338,16.094,2.414,74.975,5.157,OK
+std::sort,sorted,1000000,256,21.411,23.870,2.132,46.705,1.000,OK
+DialSort,sorted,1000000,256,3.939,4.082,0.129,253.891,5.436,OK
+DialSort-Parallel,sorted,1000000,256,2.860,3.224,0.315,349.711,7.488,OK
+IPS4o-seq,sorted,1000000,256,1.054,1.142,0.082,949.037,20.320,OK
+IPS4o-par,sorted,1000000,256,1.897,2.866,2.013,527.093,11.286,OK
+std::sort,reverse,1000000,256,17.345,17.815,0.484,57.652,1.000,OK
+DialSort,reverse,1000000,256,3.061,3.203,0.140,326.744,5.668,OK
+DialSort-Parallel,reverse,1000000,256,2.446,2.610,0.185,408.814,7.091,OK
+IPS4o-seq,reverse,1000000,256,1.203,1.270,0.056,831.117,14.416,OK
+IPS4o-par,reverse,1000000,256,7.624,10.413,2.367,131.158,2.275,OK
+std::sort,uniform,1000000,1024,57.465,59.630,1.358,17.402,1.000,OK
+DialSort,uniform,1000000,1024,1.516,1.572,0.110,659.631,37.906,OK
+DialSort-Parallel,uniform,1000000,1024,2.075,2.236,0.185,481.997,27.698,OK
+IPS4o-seq,uniform,1000000,1024,11.528,12.209,0.531,86.742,4.985,OK
+IPS4o-par,uniform,1000000,1024,7.309,9.763,2.486,136.825,7.863,OK
+std::sort,skewed,1000000,1024,48.026,48.852,0.761,20.822,1.000,OK
+DialSort,skewed,1000000,1024,1.496,1.563,0.089,668.271,32.094,OK
+DialSort-Parallel,skewed,1000000,1024,1.956,2.319,0.329,511.247,24.553,OK
+IPS4o-seq,skewed,1000000,1024,7.748,7.945,0.214,129.069,6.199,OK
+IPS4o-par,skewed,1000000,1024,5.780,7.750,1.381,173.004,8.309,OK
+std::sort,sorted,1000000,1024,13.722,13.900,0.157,72.874,1.000,OK
+DialSort,sorted,1000000,1024,2.664,2.788,0.121,375.305,5.150,OK
+DialSort-Parallel,sorted,1000000,1024,2.099,2.263,0.089,476.463,6.538,OK
+IPS4o-seq,sorted,1000000,1024,0.784,0.874,0.218,1275.510,17.503,OK
+IPS4o-par,sorted,1000000,1024,1.356,1.508,0.087,737.681,10.123,OK
+std::sort,reverse,1000000,1024,12.983,13.429,0.319,77.025,1.000,OK
+DialSort,reverse,1000000,1024,2.523,2.666,0.166,396.385,5.146,OK
+DialSort-Parallel,reverse,1000000,1024,1.940,2.045,0.080,515.570,6.694,OK
+IPS4o-seq,reverse,1000000,1024,0.944,0.992,0.048,1059.322,13.753,OK
+IPS4o-par,reverse,1000000,1024,5.226,5.586,0.383,191.344,2.484,OK
+std::sort,uniform,1000000,65536,64.141,67.769,2.688,15.591,1.000,OK
+DialSort,uniform,1000000,65536,2.393,2.474,0.055,417.833,26.800,OK
+DialSort-Parallel,uniform,1000000,65536,2.637,2.762,0.095,379.161,24.320,OK
+IPS4o-seq,uniform,1000000,65536,22.128,22.562,0.351,45.191,2.899,OK
+IPS4o-par,uniform,1000000,65536,7.382,12.606,2.975,135.461,8.689,OK
+std::sort,skewed,1000000,65536,57.204,61.820,2.974,17.481,1.000,OK
+DialSort,skewed,1000000,65536,2.059,2.214,0.277,485.625,27.780,OK
+DialSort-Parallel,skewed,1000000,65536,2.606,2.756,0.132,383.671,21.948,OK
+IPS4o-seq,skewed,1000000,65536,16.428,16.961,0.371,60.872,3.482,OK
+IPS4o-par,skewed,1000000,65536,6.364,6.583,0.140,157.144,8.989,OK
+std::sort,sorted,1000000,65536,14.807,14.912,0.097,67.534,1.000,OK
+DialSort,sorted,1000000,65536,2.435,2.483,0.066,410.678,6.081,OK
+DialSort-Parallel,sorted,1000000,65536,2.740,2.870,0.122,364.950,5.404,OK
+IPS4o-seq,sorted,1000000,65536,0.643,0.701,0.063,1555.210,23.029,OK
+IPS4o-par,sorted,1000000,65536,1.044,1.137,0.119,957.488,14.178,OK
+std::sort,reverse,1000000,65536,14.458,14.675,0.139,69.165,1.000,OK
+DialSort,reverse,1000000,65536,2.377,2.428,0.061,420.787,6.084,OK
+DialSort-Parallel,reverse,1000000,65536,3.264,3.316,0.043,306.326,4.429,OK
+IPS4o-seq,reverse,1000000,65536,0.817,0.887,0.072,1223.691,17.692,OK
+IPS4o-par,reverse,1000000,65536,7.309,7.832,0.869,136.821,1.978,OK
+std::sort,uniform,10000000,256,418.453,724.498,442.583,23.898,1.000,OK
+DialSort,uniform,10000000,256,24.508,25.254,0.654,408.030,17.074,OK
+DialSort-Parallel,uniform,10000000,256,20.778,22.367,1.514,481.269,20.139,OK
+IPS4o-seq,uniform,10000000,256,87.622,90.501,4.207,114.127,4.776,OK
+IPS4o-par,uniform,10000000,256,33.689,35.945,1.802,296.834,12.421,OK
+std::sort,skewed,10000000,256,418.407,472.675,48.690,23.900,1.000,OK
+DialSort,skewed,10000000,256,18.044,18.807,0.624,554.189,23.188,OK
+DialSort-Parallel,skewed,10000000,256,17.487,18.289,0.723,571.860,23.927,OK
+IPS4o-seq,skewed,10000000,256,97.263,190.257,111.684,102.814,4.302,OK
+IPS4o-par,skewed,10000000,256,39.867,44.496,2.647,250.831,10.495,OK
+std::sort,sorted,10000000,256,184.626,200.325,13.071,54.164,1.000,OK
+DialSort,sorted,10000000,256,28.999,30.117,1.111,344.842,6.367,OK
+DialSort-Parallel,sorted,10000000,256,17.085,21.081,3.397,585.292,10.806,OK
+IPS4o-seq,sorted,10000000,256,37.132,45.823,4.476,269.309,4.972,OK
+IPS4o-par,sorted,10000000,256,6.412,9.066,3.189,1559.624,28.795,OK
+std::sort,reverse,10000000,256,215.977,228.589,19.109,46.301,1.000,OK
+DialSort,reverse,10000000,256,30.560,31.863,0.908,327.225,7.067,OK
+DialSort-Parallel,reverse,10000000,256,16.937,19.084,1.239,590.413,12.752,OK
+IPS4o-seq,reverse,10000000,256,13.136,14.121,0.693,761.244,16.441,OK
+IPS4o-par,reverse,10000000,256,41.773,70.307,25.579,239.389,5.170,OK
+std::sort,uniform,10000000,1024,646.211,1096.099,526.624,15.475,1.000,OK
+DialSort,uniform,10000000,1024,21.312,25.344,2.469,469.224,30.322,OK
+DialSort-Parallel,uniform,10000000,1024,19.676,20.653,1.429,508.239,32.843,OK
+IPS4o-seq,uniform,10000000,1024,110.723,116.614,5.209,90.315,5.836,OK
+IPS4o-par,uniform,10000000,1024,71.976,106.298,23.292,138.935,8.978,OK
+std::sort,skewed,10000000,1024,621.544,885.316,301.794,16.089,1.000,OK
+DialSort,skewed,10000000,1024,22.011,26.414,4.257,454.314,28.238,OK
+DialSort-Parallel,skewed,10000000,1024,17.568,18.783,0.660,569.204,35.379,OK
+IPS4o-seq,skewed,10000000,1024,79.377,125.540,41.772,125.981,7.830,OK
+IPS4o-par,skewed,10000000,1024,38.008,46.979,9.283,263.102,16.353,OK
+std::sort,sorted,10000000,1024,177.707,194.753,13.199,56.272,1.000,OK
+DialSort,sorted,10000000,1024,33.235,34.876,1.422,300.884,5.347,OK
+DialSort-Parallel,sorted,10000000,1024,20.561,22.019,0.720,486.355,8.643,OK
+IPS4o-seq,sorted,10000000,1024,8.915,9.518,0.498,1121.655,19.933,OK
+IPS4o-par,sorted,10000000,1024,4.375,5.661,0.576,2285.819,40.621,OK
+std::sort,reverse,10000000,1024,212.314,420.604,327.889,47.100,1.000,OK
+DialSort,reverse,10000000,1024,39.347,40.441,0.892,254.146,5.396,OK
+DialSort-Parallel,reverse,10000000,1024,21.505,23.303,1.540,465.008,9.873,OK
+IPS4o-seq,reverse,10000000,1024,13.422,13.879,0.342,745.040,15.818,OK
+IPS4o-par,reverse,10000000,1024,44.894,63.053,10.389,222.746,4.729,OK
+std::sort,uniform,10000000,65536,791.340,1029.467,323.347,12.637,1.000,OK
+DialSort,uniform,10000000,65536,31.335,33.022,1.654,319.131,25.254,OK
+DialSort-Parallel,uniform,10000000,65536,24.260,26.426,1.110,412.208,32.620,OK
+IPS4o-seq,uniform,10000000,65536,203.289,220.073,14.766,49.191,3.893,OK
+IPS4o-par,uniform,10000000,65536,68.029,93.297,22.847,146.996,11.632,OK
+std::sort,skewed,10000000,65536,743.260,1062.424,507.909,13.454,1.000,OK
+DialSort,skewed,10000000,65536,24.483,27.887,2.155,408.450,30.358,OK
+DialSort-Parallel,skewed,10000000,65536,19.768,20.940,1.235,505.860,37.599,OK
+IPS4o-seq,skewed,10000000,65536,150.312,169.300,11.382,66.528,4.945,OK
+IPS4o-par,skewed,10000000,65536,56.880,69.703,10.496,175.810,13.067,OK
+std::sort,sorted,10000000,65536,183.483,227.547,35.317,54.501,1.000,OK
+DialSort,sorted,10000000,65536,28.170,29.550,1.111,354.988,6.513,OK
+DialSort-Parallel,sorted,10000000,65536,16.545,19.130,1.787,604.427,11.090,OK
+IPS4o-seq,sorted,10000000,65536,8.682,10.679,3.276,1151.822,21.134,OK
+IPS4o-par,sorted,10000000,65536,4.191,5.105,0.605,2386.179,43.782,OK
+std::sort,reverse,10000000,65536,171.258,182.331,12.147,58.392,1.000,OK
+DialSort,reverse,10000000,65536,27.256,27.769,0.456,366.897,6.283,OK
+DialSort-Parallel,reverse,10000000,65536,16.739,17.715,0.751,597.414,10.231,OK
+IPS4o-seq,reverse,10000000,65536,11.891,12.181,0.210,840.993,14.403,OK
+IPS4o-par,reverse,10000000,65536,68.240,87.083,19.837,146.542,2.510,OK

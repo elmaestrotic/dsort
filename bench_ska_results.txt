@@ -1,0 +1,470 @@
+================================================================
+DialSort vs. ska_sort — Direct Comparison Benchmark
+Paper: DialSort: Non-Comparative Integer Sorting
+       via the Self-Indexing Principle
+================================================================
+Compiler     : g++ 11.4.0
+Flags        : -O3 -std=c++17 -pthread
+Threads      : 8
+Warmup       : 3 discarded runs
+Measurement  : best-of-7 runs
+Seed         : 20260321
+ska_sort     : ENABLED
+================================================================
+
+TABLE — DialSort vs ska_sort vs std::sort
+Column 'vs std::sort': speedup relative to GCC introsort
+
+Algorithm                   Dist      N           U       ms (best)    M keys/s      vs std::sort  OK
+--------------------------------------------------------------------------------------------------------------
+std::sort                   uniform   10000       256     0.349        28.670        1.000         OK
+DialSort                    uniform   10000       256     0.011        884.956       30.867        OK
+DialSort-Parallel           uniform   10000       256     0.818        12.222        0.426         OK
+ska_sort                    uniform   10000       256     0.070        142.045       4.955         OK
+
+std::sort                   skewed    10000       256     0.257        38.911        1.000         OK
+DialSort                    skewed    10000       256     0.011        877.193       22.544        OK
+DialSort-Parallel           skewed    10000       256     1.129        8.859         0.228         OK
+ska_sort                    skewed    10000       256     0.070        142.857       3.671         OK
+
+std::sort                   sorted    10000       256     0.086        116.686       1.000         OK
+DialSort                    sorted    10000       256     0.019        534.759       4.583         OK
+DialSort-Parallel           sorted    10000       256     0.690        14.501        0.124         OK
+ska_sort                    sorted    10000       256     0.083        120.192       1.030         OK
+
+std::sort                   reverse   10000       256     0.115        87.108        1.000         OK
+DialSort                    reverse   10000       256     0.018        540.541       6.205         OK
+DialSort-Parallel           reverse   10000       256     0.758        13.187        0.151         OK
+ska_sort                    reverse   10000       256     0.085        117.925       1.354         OK
+
+std::sort                   uniform   10000       1024    0.430        23.261        1.000         OK
+DialSort                    uniform   10000       1024    0.016        609.756       26.213        OK
+DialSort-Parallel           uniform   10000       1024    0.591        16.915        0.727         OK
+ska_sort                    uniform   10000       1024    0.099        101.523       4.364         OK
+
+std::sort                   skewed    10000       1024    0.334        29.940        1.000         OK
+DialSort                    skewed    10000       1024    0.014        699.301       23.357        OK
+DialSort-Parallel           skewed    10000       1024    0.553        18.067        0.603         OK
+ska_sort                    skewed    10000       1024    0.095        104.822       3.501         OK
+
+std::sort                   sorted    10000       1024    0.106        94.162        1.000         OK
+DialSort                    sorted    10000       1024    0.020        497.512       5.284         OK
+DialSort-Parallel           sorted    10000       1024    0.735        13.611        0.145         OK
+ska_sort                    sorted    10000       1024    0.103        97.466        1.035         OK
+
+std::sort                   reverse   10000       1024    0.144        69.541        1.000         OK
+DialSort                    reverse   10000       1024    0.030        331.126       4.762         OK
+DialSort-Parallel           reverse   10000       1024    0.491        20.362        0.293         OK
+ska_sort                    reverse   10000       1024    0.113        88.810        1.277         OK
+
+std::sort                   uniform   10000       65536   0.496        20.149        1.000         OK
+DialSort                    uniform   10000       65536   0.184        54.466        2.703         OK
+DialSort-Parallel           uniform   10000       65536   2.276        4.394         0.218         OK
+ska_sort                    uniform   10000       65536   0.282        35.499        1.762         OK
+
+std::sort                   skewed    10000       65536   0.511        19.554        1.000         OK
+DialSort                    skewed    10000       65536   0.124        80.386        4.111         OK
+DialSort-Parallel           skewed    10000       65536   2.062        4.851         0.248         OK
+ska_sort                    skewed    10000       65536   0.134        74.738        3.822         OK
+
+std::sort                   sorted    10000       65536   0.091        109.890       1.000         OK
+DialSort                    sorted    10000       65536   0.186        53.619        0.488         OK
+DialSort-Parallel           sorted    10000       65536   2.055        4.867         0.044         OK
+ska_sort                    sorted    10000       65536   0.115        86.655        0.789         OK
+
+std::sort                   reverse   10000       65536   0.071        139.860       1.000         OK
+DialSort                    reverse   10000       65536   0.188        53.079        0.380         OK
+DialSort-Parallel           reverse   10000       65536   2.029        4.930         0.035         OK
+ska_sort                    reverse   10000       65536   0.162        61.920        0.443         OK
+
+std::sort                   uniform   100000      256     4.004        24.974        1.000         OK
+DialSort                    uniform   100000      256     0.123        813.670       32.581        OK
+DialSort-Parallel           uniform   100000      256     0.754        132.644       5.311         OK
+ska_sort                    uniform   100000      256     0.757        132.031       5.287         OK
+
+std::sort                   skewed    100000      256     2.950        33.897        1.000         OK
+DialSort                    skewed    100000      256     0.125        798.085       23.544        OK
+DialSort-Parallel           skewed    100000      256     0.695        143.906       4.245         OK
+ska_sort                    skewed    100000      256     0.757        132.066       3.896         OK
+
+std::sort                   sorted    100000      256     0.893        112.032       1.000         OK
+DialSort                    sorted    100000      256     0.230        434.028       3.874         OK
+DialSort-Parallel           sorted    100000      256     0.728        137.344       1.226         OK
+ska_sort                    sorted    100000      256     0.940        106.417       0.950         OK
+
+std::sort                   reverse   100000      256     0.919        108.861       1.000         OK
+DialSort                    reverse   100000      256     0.231        432.713       3.975         OK
+DialSort-Parallel           reverse   100000      256     0.762        131.303       1.206         OK
+ska_sort                    reverse   100000      256     0.948        105.485       0.969         OK
+
+std::sort                   uniform   100000      1024    5.224        19.144        1.000         OK
+DialSort                    uniform   100000      1024    0.138        723.066       37.770        OK
+DialSort-Parallel           uniform   100000      1024    0.965        103.627       5.413         OK
+ska_sort                    uniform   100000      1024    0.953        104.954       5.482         OK
+
+std::sort                   skewed    100000      1024    4.144        24.134        1.000         OK
+DialSort                    skewed    100000      1024    0.141        707.714       29.324        OK
+DialSort-Parallel           skewed    100000      1024    0.861        116.158       4.813         OK
+ska_sort                    skewed    100000      1024    1.017        98.348        4.075         OK
+
+std::sort                   sorted    100000      1024    1.037        96.395        1.000         OK
+DialSort                    sorted    100000      1024    0.264        379.507       3.937         OK
+DialSort-Parallel           sorted    100000      1024    0.900        111.161       1.153         OK
+ska_sort                    sorted    100000      1024    1.274        78.505        0.814         OK
+
+std::sort                   reverse   100000      1024    1.069        93.502        1.000         OK
+DialSort                    reverse   100000      1024    0.255        392.773       4.201         OK
+DialSort-Parallel           reverse   100000      1024    0.991        100.929       1.079         OK
+ska_sort                    reverse   100000      1024    1.297        77.101        0.825         OK
+
+std::sort                   uniform   100000      65536   7.304        13.690        1.000         OK
+DialSort                    uniform   100000      65536   0.830        120.453       8.798         OK
+DialSort-Parallel           uniform   100000      65536   3.154        31.702        2.316         OK
+ska_sort                    uniform   100000      65536   1.784        56.041        4.094         OK
+
+std::sort                   skewed    100000      65536   6.438        15.533        1.000         OK
+DialSort                    skewed    100000      65536   0.529        189.000       12.167        OK
+DialSort-Parallel           skewed    100000      65536   2.630        38.030        2.448         OK
+ska_sort                    skewed    100000      65536   1.599        62.535        4.026         OK
+
+std::sort                   sorted    100000      65536   1.849        54.077        1.000         OK
+DialSort                    sorted    100000      65536   0.796        125.597       2.323         OK
+DialSort-Parallel           sorted    100000      65536   3.106        32.195        0.595         OK
+ska_sort                    sorted    100000      65536   1.835        54.505        1.008         OK
+
+std::sort                   reverse   100000      65536   1.308        76.453        1.000         OK
+DialSort                    reverse   100000      65536   0.804        124.425       1.627         OK
+DialSort-Parallel           reverse   100000      65536   3.156        31.685        0.414         OK
+ska_sort                    reverse   100000      65536   1.998        50.055        0.655         OK
+
+std::sort                   uniform   1000000     256     40.630       24.612        1.000         OK
+DialSort                    uniform   1000000     256     1.298        770.654       31.312        OK
+DialSort-Parallel           uniform   1000000     256     1.788        559.378       22.728        OK
+ska_sort                    uniform   1000000     256     7.782        128.497       5.221         OK
+
+std::sort                   skewed    1000000     256     29.316       34.111        1.000         OK
+DialSort                    skewed    1000000     256     2.236        447.247       13.111        OK
+DialSort-Parallel           skewed    1000000     256     2.531        395.163       11.584        OK
+ska_sort                    skewed    1000000     256     9.876        101.257       2.968         OK
+
+std::sort                   sorted    1000000     256     38.094       26.251        1.000         OK
+DialSort                    sorted    1000000     256     3.914        255.513       9.733         OK
+DialSort-Parallel           sorted    1000000     256     3.568        280.277       10.677        OK
+ska_sort                    sorted    1000000     256     24.550       40.732        1.552         OK
+
+std::sort                   reverse   1000000     256     35.685       28.023        1.000         OK
+DialSort                    reverse   1000000     256     4.294        232.905       8.311         OK
+DialSort-Parallel           reverse   1000000     256     3.481        287.290       10.252        OK
+ska_sort                    reverse   1000000     256     14.626       68.372        2.440         OK
+
+std::sort                   uniform   1000000     1024    63.343       15.787        1.000         OK
+DialSort                    uniform   1000000     1024    1.924        519.805       32.926        OK
+DialSort-Parallel           uniform   1000000     1024    2.434        410.762       26.019        OK
+ska_sort                    uniform   1000000     1024    11.602       86.193        5.460         OK
+
+std::sort                   skewed    1000000     1024    48.828       20.480        1.000         OK
+DialSort                    skewed    1000000     1024    3.065        326.222       15.929        OK
+DialSort-Parallel           skewed    1000000     1024    3.704        269.986       13.183        OK
+ska_sort                    skewed    1000000     1024    12.867       77.721        3.795         OK
+
+std::sort                   sorted    1000000     1024    17.681       56.558        1.000         OK
+DialSort                    sorted    1000000     1024    3.349        298.552       5.279         OK
+DialSort-Parallel           sorted    1000000     1024    3.039        329.034       5.818         OK
+ska_sort                    sorted    1000000     1024    15.703       63.684        1.126         OK
+
+std::sort                   reverse   1000000     1024    12.257       81.586        1.000         OK
+DialSort                    reverse   1000000     1024    3.024        330.666       4.053         OK
+DialSort-Parallel           reverse   1000000     1024    2.540        393.701       4.826         OK
+ska_sort                    reverse   1000000     1024    14.134       70.749        0.867         OK
+
+std::sort                   uniform   1000000     65536   93.565       10.688        1.000         OK
+DialSort                    uniform   1000000     65536   3.920        255.115       23.870        OK
+DialSort-Parallel           uniform   1000000     65536   5.016        199.374       18.655        OK
+ska_sort                    uniform   1000000     65536   17.677       56.570        5.293         OK
+
+std::sort                   skewed    1000000     65536   82.606       12.106        1.000         OK
+DialSort                    skewed    1000000     65536   5.395        185.343       15.311        OK
+DialSort-Parallel           skewed    1000000     65536   8.252        121.190       10.011        OK
+ska_sort                    skewed    1000000     65536   38.596       25.909        2.140         OK
+
+std::sort                   sorted    1000000     65536   20.811       48.052        1.000         OK
+DialSort                    sorted    1000000     65536   4.164        240.136       4.997         OK
+DialSort-Parallel           sorted    1000000     65536   5.743        174.119       3.624         OK
+ska_sort                    sorted    1000000     65536   16.348       61.171        1.273         OK
+
+std::sort                   reverse   1000000     65536   19.244       51.963        1.000         OK
+DialSort                    reverse   1000000     65536   5.043        198.299       3.816         OK
+DialSort-Parallel           reverse   1000000     65536   5.883        169.981       3.271         OK
+ska_sort                    reverse   1000000     65536   21.677       46.131        0.888         OK
+
+std::sort                   uniform   10000000    256     481.198      20.781        1.000         OK
+DialSort                    uniform   10000000    256     17.812       561.419       27.015        OK
+DialSort-Parallel           uniform   10000000    256     19.700       507.614       24.426        OK
+ska_sort                    uniform   10000000    256     112.367      88.994        4.282         OK
+
+std::sort                   skewed    10000000    256     379.646      26.340        1.000         OK
+DialSort                    skewed    10000000    256     43.390       230.469       8.750         OK
+DialSort-Parallel           skewed    10000000    256     19.797       505.140       19.177        OK
+ska_sort                    skewed    10000000    256     102.777      97.298        3.694         OK
+
+std::sort                   sorted    10000000    256     144.080      69.406        1.000         OK
+DialSort                    sorted    10000000    256     29.847       335.041       4.827         OK
+DialSort-Parallel           sorted    10000000    256     17.860       559.901       8.067         OK
+ska_sort                    sorted    10000000    256     124.581      80.269        1.157         OK
+
+std::sort                   reverse   10000000    256     147.214      67.928        1.000         OK
+DialSort                    reverse   10000000    256     29.358       340.625       5.014         OK
+DialSort-Parallel           reverse   10000000    256     15.262       655.201       9.645         OK
+ska_sort                    reverse   10000000    256     105.257      95.006        1.399         OK
+
+std::sort                   uniform   10000000    1024    539.903      18.522        1.000         OK
+DialSort                    uniform   10000000    1024    19.722       507.051       27.376        OK
+DialSort-Parallel           uniform   10000000    1024    15.642       639.325       34.517        OK
+ska_sort                    uniform   10000000    1024    110.936      90.142        4.867         OK
+
+std::sort                   skewed    10000000    1024    435.856      22.943        1.000         OK
+DialSort                    skewed    10000000    1024    19.505       512.686       22.346        OK
+DialSort-Parallel           skewed    10000000    1024    17.185       581.903       25.363        OK
+ska_sort                    skewed    10000000    1024    122.028      81.948        3.572         OK
+
+std::sort                   sorted    10000000    1024    158.057      63.268        1.000         OK
+DialSort                    sorted    10000000    1024    31.347       319.009       5.042         OK
+DialSort-Parallel           sorted    10000000    1024    18.787       532.277       8.413         OK
+ska_sort                    sorted    10000000    1024    125.466      79.703        1.260         OK
+
+std::sort                   reverse   10000000    1024    156.464      63.913        1.000         OK
+DialSort                    reverse   10000000    1024    34.790       287.436       4.497         OK
+DialSort-Parallel           reverse   10000000    1024    16.831       594.131       9.296         OK
+ska_sort                    reverse   10000000    1024    129.271      77.357        1.210         OK
+
+std::sort                   uniform   10000000    65536   719.955      13.890        1.000         OK
+DialSort                    uniform   10000000    65536   23.727       421.455       30.343        OK
+DialSort-Parallel           uniform   10000000    65536   39.613       252.442       18.175        OK
+ska_sort                    uniform   10000000    65536   108.703      91.994        6.623         OK
+
+std::sort                   skewed    10000000    65536   638.972      15.650        1.000         OK
+DialSort                    skewed    10000000    65536   23.489       425.726       27.203        OK
+DialSort-Parallel           skewed    10000000    65536   18.446       542.111       34.639        OK
+ska_sort                    skewed    10000000    65536   116.382      85.924        5.490         OK
+
+std::sort                   sorted    10000000    65536   141.017      70.914        1.000         OK
+DialSort                    sorted    10000000    65536   28.902       345.997       4.879         OK
+DialSort-Parallel           sorted    10000000    65536   17.165       582.577       8.215         OK
+ska_sort                    sorted    10000000    65536   124.310      80.444        1.134         OK
+
+std::sort                   reverse   10000000    65536   136.557      73.230        1.000         OK
+DialSort                    reverse   10000000    65536   28.126       355.544       4.855         OK
+DialSort-Parallel           reverse   10000000    65536   16.210       616.884       8.424         OK
+ska_sort                    reverse   10000000    65536   127.383      78.503        1.072         OK
+
+================================================================
+SUMMARY — DialSort vs ska_sort
+================================================================
+
+Configurations measured              : 48
+DialSort faster than ska_sort        : 46 / 48
+Avg ratio DialSort / ska_sort         : 0.300x
+Min ratio DialSort / ska_sort (best)  : 0.139x
+Max ratio DialSort / ska_sort (worst) : 1.616x
+
+NOTE: ratio < 1.0 => DialSort is faster than ska_sort
+      ratio > 1.0 => ska_sort is faster than DialSort
+
+All correctness checks: PASSED
+
+================================================================
+CSV OUTPUT
+================================================================
+algo,dist,N,U,ms_best,Mkeys_per_s,speedup_vs_std,correct
+std::sort,uniform,10000,256,0.349,28.670,1.000,OK
+DialSort,uniform,10000,256,0.011,884.956,30.867,OK
+DialSort-Parallel,uniform,10000,256,0.818,12.222,0.426,OK
+ska_sort,uniform,10000,256,0.070,142.045,4.955,OK
+std::sort,skewed,10000,256,0.257,38.911,1.000,OK
+DialSort,skewed,10000,256,0.011,877.193,22.544,OK
+DialSort-Parallel,skewed,10000,256,1.129,8.859,0.228,OK
+ska_sort,skewed,10000,256,0.070,142.857,3.671,OK
+std::sort,sorted,10000,256,0.086,116.686,1.000,OK
+DialSort,sorted,10000,256,0.019,534.759,4.583,OK
+DialSort-Parallel,sorted,10000,256,0.690,14.501,0.124,OK
+ska_sort,sorted,10000,256,0.083,120.192,1.030,OK
+std::sort,reverse,10000,256,0.115,87.108,1.000,OK
+DialSort,reverse,10000,256,0.018,540.541,6.205,OK
+DialSort-Parallel,reverse,10000,256,0.758,13.187,0.151,OK
+ska_sort,reverse,10000,256,0.085,117.925,1.354,OK
+std::sort,uniform,10000,1024,0.430,23.261,1.000,OK
+DialSort,uniform,10000,1024,0.016,609.756,26.213,OK
+DialSort-Parallel,uniform,10000,1024,0.591,16.915,0.727,OK
+ska_sort,uniform,10000,1024,0.099,101.523,4.364,OK
+std::sort,skewed,10000,1024,0.334,29.940,1.000,OK
+DialSort,skewed,10000,1024,0.014,699.301,23.357,OK
+DialSort-Parallel,skewed,10000,1024,0.553,18.067,0.603,OK
+ska_sort,skewed,10000,1024,0.095,104.822,3.501,OK
+std::sort,sorted,10000,1024,0.106,94.162,1.000,OK
+DialSort,sorted,10000,1024,0.020,497.512,5.284,OK
+DialSort-Parallel,sorted,10000,1024,0.735,13.611,0.145,OK
+ska_sort,sorted,10000,1024,0.103,97.466,1.035,OK
+std::sort,reverse,10000,1024,0.144,69.541,1.000,OK
+DialSort,reverse,10000,1024,0.030,331.126,4.762,OK
+DialSort-Parallel,reverse,10000,1024,0.491,20.362,0.293,OK
+ska_sort,reverse,10000,1024,0.113,88.810,1.277,OK
+std::sort,uniform,10000,65536,0.496,20.149,1.000,OK
+DialSort,uniform,10000,65536,0.184,54.466,2.703,OK
+DialSort-Parallel,uniform,10000,65536,2.276,4.394,0.218,OK
+ska_sort,uniform,10000,65536,0.282,35.499,1.762,OK
+std::sort,skewed,10000,65536,0.511,19.554,1.000,OK
+DialSort,skewed,10000,65536,0.124,80.386,4.111,OK
+DialSort-Parallel,skewed,10000,65536,2.062,4.851,0.248,OK
+ska_sort,skewed,10000,65536,0.134,74.738,3.822,OK
+std::sort,sorted,10000,65536,0.091,109.890,1.000,OK
+DialSort,sorted,10000,65536,0.186,53.619,0.488,OK
+DialSort-Parallel,sorted,10000,65536,2.055,4.867,0.044,OK
+ska_sort,sorted,10000,65536,0.115,86.655,0.789,OK
+std::sort,reverse,10000,65536,0.071,139.860,1.000,OK
+DialSort,reverse,10000,65536,0.188,53.079,0.380,OK
+DialSort-Parallel,reverse,10000,65536,2.029,4.930,0.035,OK
+ska_sort,reverse,10000,65536,0.162,61.920,0.443,OK
+std::sort,uniform,100000,256,4.004,24.974,1.000,OK
+DialSort,uniform,100000,256,0.123,813.670,32.581,OK
+DialSort-Parallel,uniform,100000,256,0.754,132.644,5.311,OK
+ska_sort,uniform,100000,256,0.757,132.031,5.287,OK
+std::sort,skewed,100000,256,2.950,33.897,1.000,OK
+DialSort,skewed,100000,256,0.125,798.085,23.544,OK
+DialSort-Parallel,skewed,100000,256,0.695,143.906,4.245,OK
+ska_sort,skewed,100000,256,0.757,132.066,3.896,OK
+std::sort,sorted,100000,256,0.893,112.032,1.000,OK
+DialSort,sorted,100000,256,0.230,434.028,3.874,OK
+DialSort-Parallel,sorted,100000,256,0.728,137.344,1.226,OK
+ska_sort,sorted,100000,256,0.940,106.417,0.950,OK
+std::sort,reverse,100000,256,0.919,108.861,1.000,OK
+DialSort,reverse,100000,256,0.231,432.713,3.975,OK
+DialSort-Parallel,reverse,100000,256,0.762,131.303,1.206,OK
+ska_sort,reverse,100000,256,0.948,105.485,0.969,OK
+std::sort,uniform,100000,1024,5.224,19.144,1.000,OK
+DialSort,uniform,100000,1024,0.138,723.066,37.770,OK
+DialSort-Parallel,uniform,100000,1024,0.965,103.627,5.413,OK
+ska_sort,uniform,100000,1024,0.953,104.954,5.482,OK
+std::sort,skewed,100000,1024,4.144,24.134,1.000,OK
+DialSort,skewed,100000,1024,0.141,707.714,29.324,OK
+DialSort-Parallel,skewed,100000,1024,0.861,116.158,4.813,OK
+ska_sort,skewed,100000,1024,1.017,98.348,4.075,OK
+std::sort,sorted,100000,1024,1.037,96.395,1.000,OK
+DialSort,sorted,100000,1024,0.264,379.507,3.937,OK
+DialSort-Parallel,sorted,100000,1024,0.900,111.161,1.153,OK
+ska_sort,sorted,100000,1024,1.274,78.505,0.814,OK
+std::sort,reverse,100000,1024,1.069,93.502,1.000,OK
+DialSort,reverse,100000,1024,0.255,392.773,4.201,OK
+DialSort-Parallel,reverse,100000,1024,0.991,100.929,1.079,OK
+ska_sort,reverse,100000,1024,1.297,77.101,0.825,OK
+std::sort,uniform,100000,65536,7.304,13.690,1.000,OK
+DialSort,uniform,100000,65536,0.830,120.453,8.798,OK
+DialSort-Parallel,uniform,100000,65536,3.154,31.702,2.316,OK
+ska_sort,uniform,100000,65536,1.784,56.041,4.094,OK
+std::sort,skewed,100000,65536,6.438,15.533,1.000,OK
+DialSort,skewed,100000,65536,0.529,189.000,12.167,OK
+DialSort-Parallel,skewed,100000,65536,2.630,38.030,2.448,OK
+ska_sort,skewed,100000,65536,1.599,62.535,4.026,OK
+std::sort,sorted,100000,65536,1.849,54.077,1.000,OK
+DialSort,sorted,100000,65536,0.796,125.597,2.323,OK
+DialSort-Parallel,sorted,100000,65536,3.106,32.195,0.595,OK
+ska_sort,sorted,100000,65536,1.835,54.505,1.008,OK
+std::sort,reverse,100000,65536,1.308,76.453,1.000,OK
+DialSort,reverse,100000,65536,0.804,124.425,1.627,OK
+DialSort-Parallel,reverse,100000,65536,3.156,31.685,0.414,OK
+ska_sort,reverse,100000,65536,1.998,50.055,0.655,OK
+std::sort,uniform,1000000,256,40.630,24.612,1.000,OK
+DialSort,uniform,1000000,256,1.298,770.654,31.312,OK
+DialSort-Parallel,uniform,1000000,256,1.788,559.378,22.728,OK
+ska_sort,uniform,1000000,256,7.782,128.497,5.221,OK
+std::sort,skewed,1000000,256,29.316,34.111,1.000,OK
+DialSort,skewed,1000000,256,2.236,447.247,13.111,OK
+DialSort-Parallel,skewed,1000000,256,2.531,395.163,11.584,OK
+ska_sort,skewed,1000000,256,9.876,101.257,2.968,OK
+std::sort,sorted,1000000,256,38.094,26.251,1.000,OK
+DialSort,sorted,1000000,256,3.914,255.513,9.733,OK
+DialSort-Parallel,sorted,1000000,256,3.568,280.277,10.677,OK
+ska_sort,sorted,1000000,256,24.550,40.732,1.552,OK
+std::sort,reverse,1000000,256,35.685,28.023,1.000,OK
+DialSort,reverse,1000000,256,4.294,232.905,8.311,OK
+DialSort-Parallel,reverse,1000000,256,3.481,287.290,10.252,OK
+ska_sort,reverse,1000000,256,14.626,68.372,2.440,OK
+std::sort,uniform,1000000,1024,63.343,15.787,1.000,OK
+DialSort,uniform,1000000,1024,1.924,519.805,32.926,OK
+DialSort-Parallel,uniform,1000000,1024,2.434,410.762,26.019,OK
+ska_sort,uniform,1000000,1024,11.602,86.193,5.460,OK
+std::sort,skewed,1000000,1024,48.828,20.480,1.000,OK
+DialSort,skewed,1000000,1024,3.065,326.222,15.929,OK
+DialSort-Parallel,skewed,1000000,1024,3.704,269.986,13.183,OK
+ska_sort,skewed,1000000,1024,12.867,77.721,3.795,OK
+std::sort,sorted,1000000,1024,17.681,56.558,1.000,OK
+DialSort,sorted,1000000,1024,3.349,298.552,5.279,OK
+DialSort-Parallel,sorted,1000000,1024,3.039,329.034,5.818,OK
+ska_sort,sorted,1000000,1024,15.703,63.684,1.126,OK
+std::sort,reverse,1000000,1024,12.257,81.586,1.000,OK
+DialSort,reverse,1000000,1024,3.024,330.666,4.053,OK
+DialSort-Parallel,reverse,1000000,1024,2.540,393.701,4.826,OK
+ska_sort,reverse,1000000,1024,14.134,70.749,0.867,OK
+std::sort,uniform,1000000,65536,93.565,10.688,1.000,OK
+DialSort,uniform,1000000,65536,3.920,255.115,23.870,OK
+DialSort-Parallel,uniform,1000000,65536,5.016,199.374,18.655,OK
+ska_sort,uniform,1000000,65536,17.677,56.570,5.293,OK
+std::sort,skewed,1000000,65536,82.606,12.106,1.000,OK
+DialSort,skewed,1000000,65536,5.395,185.343,15.311,OK
+DialSort-Parallel,skewed,1000000,65536,8.252,121.190,10.011,OK
+ska_sort,skewed,1000000,65536,38.596,25.909,2.140,OK
+std::sort,sorted,1000000,65536,20.811,48.052,1.000,OK
+DialSort,sorted,1000000,65536,4.164,240.136,4.997,OK
+DialSort-Parallel,sorted,1000000,65536,5.743,174.119,3.624,OK
+ska_sort,sorted,1000000,65536,16.348,61.171,1.273,OK
+std::sort,reverse,1000000,65536,19.244,51.963,1.000,OK
+DialSort,reverse,1000000,65536,5.043,198.299,3.816,OK
+DialSort-Parallel,reverse,1000000,65536,5.883,169.981,3.271,OK
+ska_sort,reverse,1000000,65536,21.677,46.131,0.888,OK
+std::sort,uniform,10000000,256,481.198,20.781,1.000,OK
+DialSort,uniform,10000000,256,17.812,561.419,27.015,OK
+DialSort-Parallel,uniform,10000000,256,19.700,507.614,24.426,OK
+ska_sort,uniform,10000000,256,112.367,88.994,4.282,OK
+std::sort,skewed,10000000,256,379.646,26.340,1.000,OK
+DialSort,skewed,10000000,256,43.390,230.469,8.750,OK
+DialSort-Parallel,skewed,10000000,256,19.797,505.140,19.177,OK
+ska_sort,skewed,10000000,256,102.777,97.298,3.694,OK
+std::sort,sorted,10000000,256,144.080,69.406,1.000,OK
+DialSort,sorted,10000000,256,29.847,335.041,4.827,OK
+DialSort-Parallel,sorted,10000000,256,17.860,559.901,8.067,OK
+ska_sort,sorted,10000000,256,124.581,80.269,1.157,OK
+std::sort,reverse,10000000,256,147.214,67.928,1.000,OK
+DialSort,reverse,10000000,256,29.358,340.625,5.014,OK
+DialSort-Parallel,reverse,10000000,256,15.262,655.201,9.645,OK
+ska_sort,reverse,10000000,256,105.257,95.006,1.399,OK
+std::sort,uniform,10000000,1024,539.903,18.522,1.000,OK
+DialSort,uniform,10000000,1024,19.722,507.051,27.376,OK
+DialSort-Parallel,uniform,10000000,1024,15.642,639.325,34.517,OK
+ska_sort,uniform,10000000,1024,110.936,90.142,4.867,OK
+std::sort,skewed,10000000,1024,435.856,22.943,1.000,OK
+DialSort,skewed,10000000,1024,19.505,512.686,22.346,OK
+DialSort-Parallel,skewed,10000000,1024,17.185,581.903,25.363,OK
+ska_sort,skewed,10000000,1024,122.028,81.948,3.572,OK
+std::sort,sorted,10000000,1024,158.057,63.268,1.000,OK
+DialSort,sorted,10000000,1024,31.347,319.009,5.042,OK
+DialSort-Parallel,sorted,10000000,1024,18.787,532.277,8.413,OK
+ska_sort,sorted,10000000,1024,125.466,79.703,1.260,OK
+std::sort,reverse,10000000,1024,156.464,63.913,1.000,OK
+DialSort,reverse,10000000,1024,34.790,287.436,4.497,OK
+DialSort-Parallel,reverse,10000000,1024,16.831,594.131,9.296,OK
+ska_sort,reverse,10000000,1024,129.271,77.357,1.210,OK
+std::sort,uniform,10000000,65536,719.955,13.890,1.000,OK
+DialSort,uniform,10000000,65536,23.727,421.455,30.343,OK
+DialSort-Parallel,uniform,10000000,65536,39.613,252.442,18.175,OK
+ska_sort,uniform,10000000,65536,108.703,91.994,6.623,OK
+std::sort,skewed,10000000,65536,638.972,15.650,1.000,OK
+DialSort,skewed,10000000,65536,23.489,425.726,27.203,OK
+DialSort-Parallel,skewed,10000000,65536,18.446,542.111,34.639,OK
+ska_sort,skewed,10000000,65536,116.382,85.924,5.490,OK
+std::sort,sorted,10000000,65536,141.017,70.914,1.000,OK
+DialSort,sorted,10000000,65536,28.902,345.997,4.879,OK
+DialSort-Parallel,sorted,10000000,65536,17.165,582.577,8.215,OK
+ska_sort,sorted,10000000,65536,124.310,80.444,1.134,OK
+std::sort,reverse,10000000,65536,136.557,73.230,1.000,OK
+DialSort,reverse,10000000,65536,28.126,355.544,4.855,OK
+DialSort-Parallel,reverse,10000000,65536,16.210,616.884,8.424,OK
+ska_sort,reverse,10000000,65536,127.383,78.503,1.072,OK
