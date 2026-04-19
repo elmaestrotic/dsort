@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>DialSort — Interactive Simulators</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Roboto, sans-serif;
+      background: #0b0f1a;
+      color: #e6e6e6;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: auto;
+      padding: 60px 20px;
+    }
+
+    h1 {
+      font-size: 2.5em;
+      margin-bottom: 10px;
+      color: #ffffff;
+    }
+
+    h2 {
+      font-weight: 400;
+      color: #9aa4b2;
+      margin-bottom: 40px;
+    }
+
+    .card {
+      background: #121826;
+      border: 1px solid #1f2a44;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      transition: all 0.2s ease;
+    }
+
+    .card:hover {
+      border-color: #3b82f6;
+      transform: translateY(-3px);
+    }
+
+    .title {
+      font-size: 1.2em;
+      margin-bottom: 8px;
+      color: #ffffff;
+    }
+
+    .desc {
+      font-size: 0.95em;
+      color: #aab3c2;
+      margin-bottom: 12px;
+    }
+
+    a {
+      text-decoration: none;
+      color: #60a5fa;
+      font-weight: 500;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    .footer {
+      margin-top: 60px;
+      font-size: 0.85em;
+      color: #6b7280;
+    }
+
+    .paper {
+      margin-top: 30px;
+      padding: 15px;
+      background: #0f172a;
+      border-left: 4px solid #3b82f6;
+      border-radius: 6px;
+    }
+
+    .paper a {
+      color: #93c5fd;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+
+    <h1>DialSort</h1>
+    <h2>Interactive Visualization Suite</h2>
+
+    <div class="paper">
+      <strong>Paper:</strong><br>
+      <a href="https://doi.org/10.5281/zenodo.19169171" target="_blank">
+        DialSort: Non-Comparative Integer Sorting via the Self-Indexing Principle
+      </a>
+    </div>
+
+    <div class="card">
+      <div class="title">Chip Visualizer</div>
+      <div class="desc">
+        Hardware-level abstraction of DialSort using activation lanes and memory mapping.
+      </div>
+      <a href="simulators/chip-visualizer/">Open simulator →</a>
+    </div>
+
+    <div class="card">
+      <div class="title">Sovereign Dial</div>
+      <div class="desc">
+        Conceptual model of value-to-address identity mapping in a bounded universe.
+      </div>
+      <a href="simulators/sovereign-dial/">Open simulator →</a>
+    </div>
+
+    <div class="card">
+      <div class="title">Luminico</div>
+      <div class="desc">
+        Visual exploration of distribution dynamics and memory activation patterns.
+      </div>
+      <a href="simulators/luminico/">Open simulator →</a>
+    </div>
+
+    <div class="card">
+      <div class="title">CRN (Conflict Resolution Network)</div>
+      <div class="desc">
+        Parallel reduction model for concurrent write resolution without prefix sums.
+      </div>
+      <a href="simulators/crn/">Open simulator →</a>
+    </div>
+
+    <div class="footer">
+      DialSort Research — Interactive Demonstrations
+    </div>
+
+  </div>
+
+</body>
+</html>
