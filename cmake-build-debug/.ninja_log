@@ -1,5 +1,6 @@
 # ninja log v5
+15	3845	7961938720723774	CMakeFiles/bench_vs.dir/bench_vs_dialsort_vs_counting_bench.cpp.obj	6831d7484bffe177
 9	3072	7958370869483194	CMakeFiles/dsortcpp.dir/dialsort_benchmark_v2.cpp.obj	1124555a9b1c4aa8
 3073	3436	7958370873157061	dsortcpp.exe	116d1d219db5a2de
-1	2961	7959730467100771	CMakeFiles/bench_vs.dir/bench_vs_dialsort_vs_counting_bench.cpp.obj	396985793662de1e
-2962	3640	7959730473878094	bench_vs.exe	fa5c1973650cd70
+2	443	7982711958126878	build.ninja	59f8ea480efcd56f
+8	4177	7961938724061286	CMakeFiles/bench_vs.dir/DialsortvsIps4o.cpp.obj	45b62090a32310e5
