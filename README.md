@@ -42,7 +42,7 @@ After ingestion, the dataset is represented as a histogram `H[k]`, where each va
 
 ### 🔦 Abacus-and-Torch Analogy
 
-![DialSort Geometric Scan](./assets/dialsort_abacus_torch.png)
+![DialSort Geometric Scan](./blob/main/dialsort_abacus_torch.png) 
 
 **Figure:** After ingestion, each value *k* occupies exactly `H[k]` independent rails.  
 A torch sweeps the value axis from `k = 0` to `U − 1`. Repeated values appear side-by-side at the same height.
